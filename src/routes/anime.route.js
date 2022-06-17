@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getAll, getInformation, create, deleteSoft } = require('../controllers/anime.controller');
 
-router.get('/all', getAll);
-router.post('/', create);
-router.delete('/delete/:id', deleteSoft);
-router.get('/:id', getInformation);
+// const { getAll, getInformation, createOne, updateOne, deleteSoft, activateOne  } = require('../controllers/anime.controller');
+const AnimeController = require('../controllers/anime.controller');
+
+router.get('/all', AnimeController.getAll);
+router.post('/', AnimeController.createOne);
+// router.put('/update/:id', updateOne);
+router.put('/activate/:id', AnimeController.activateOne);
+router.delete('/delete/:id', AnimeController.deleteSoft);
+router.get('/:id', AnimeController.getInformation);
 
 
 module.exports = router;

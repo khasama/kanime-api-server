@@ -1,75 +1,96 @@
 const pool = require('./db');
 const slug = require('slug');
-const Genre = require('./genre.model');
+const promisePool = pool.promise();
 
 function Anime(anime) {
-    this.Name = anime.name;
-    this.OtherName = anime.othername;
-    this.Slug = slug(anime.name);
-    this.Year = anime.year;
-    this.Content = anime.content;
-    this.View = 0;
-    this.Liked = 0;
-    this.Image = anime.image;
-    this.ImageBG = anime.imagebg;
-    this.MainServer = 4;
-    this.Status = 2;
-    this.NewUpdate = 0;
-    this.Activate = 1;
+    this.name = anime.name;
+    this.othername = anime.othername;
+    this.slug = slug(anime.name);
+    this.year = anime.year;
+    this.content = anime.content;
+    this.view = 0;
+    this.liked = 0;
+    this.image = anime.image;
+    this.imagebg = anime.imagebg;
+    this.mainserver = 4;
+    this.status = 2;
+    this.newupdate = 0;
+    this.activate = 1;
 }
 
-Anime.create = (anime, result) => {
-    pool.execute(`
+
+Anime.createOne = async (anime) => {
+    return await promisePool.execute(`
         INSERT INTO tb_anime
         VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         `, 
         [
-            anime.Name, 
-            anime.OtherName, 
-            anime.Slug, 
-            anime.Year, 
-            anime.Content, 
-            anime.View, 
-            anime.Liked, 
-            anime.Image, 
-            anime.ImageBG,
-            anime.MainServer,
-            anime.Status,
-            anime.NewUpdate,
-            anime.Activate
+            anime.name, 
+            anime.othername, 
+            anime.slug, 
+            anime.year, 
+            anime.content, 
+            anime.view, 
+            anime.liked, 
+            anime.image, 
+            anime.imagebg,
+            anime.mainserver,
+            anime.status,
+            anime.newupdate,
+            anime.activate
+        ]
+    );
+}
+
+Anime.updateOne = (anime, result) => {
+
+    pool.execute(`
+        UPDATE tb_anime
+        SET Name = ?,
+            OtherName = ?,
+            Slug = ?,
+            idYear = ?,
+            Content = ?,
+            View = ?,
+            Liked = ?,
+            Image = ?,
+            ImageBG = ?,
+            MainServer = ?,
+            idStatus = ?
+        WHERE idAnime = ?
+        `, 
+        [
+            anime.name, 
+            anime.othername, 
+            slug(anime.name), 
+            anime.year, 
+            anime.content, 
+            anime.view, 
+            anime.liked, 
+            anime.image, 
+            anime.imagebg,
+            anime.mainserver,
+            anime.status,
+            anime.id
         ],
-        (err, rows, fields) => {
-            if(err){
-                console.log(err);
-            }
-            result(err, rows);
+        (err, rs) => {
+            result(err, rs);
         }
     );
 }
 
-Anime.getAll = (result) => {
-    pool.execute(`
-        SELECT * FROM tb_anime 
+
+Anime.getAll = async () => {
+    return await promisePool.execute(`
+        SELECT * FROM tb_anime
         INNER JOIN tb_status 
         ON tb_anime.idStatus = tb_status.idStatus
-        `, 
-        (err, rows, fields) => {
-            if(err){
-                console.log(err);
-            }
-            result(err, rows);
-        }
+        `
     );
 }
 
-Anime.getInformation = async (id, result) => {
-    let genre = [];
-    
-    await Genre.getAGOA(id, rows => {
-        genre = rows;
-    });
-
-    pool.execute(`
+Anime.getInformation = async (id) => {
+    return await promisePool.execute(`
         SELECT * FROM tb_anime 
         INNER JOIN tb_status
         ON tb_anime.idStatus = tb_status.idStatus
@@ -77,39 +98,35 @@ Anime.getInformation = async (id, result) => {
         ON tb_anime.idYear = tb_year.idYear
         WHERE tb_anime.idAnime = ?
         `, 
-        [id], 
-        (err, rows, fields) => {
-            if(err){
-                console.log(err);
-            }
-            rows[0].Genre = genre;
-            result(err, rows);
-        }
+        [id]
     );
     
 }
 
-Anime.deleteSoft = (id, result) => {
-    pool.execute(`
+Anime.deleteSoft = async (id) => {
+    return await promisePool.execute(`
         UPDATE tb_anime
         SET Activate = 0
         WHERE idAnime = ?
         `, 
-        [id], 
-        (err, rs) => {
-            if(err){
-                console.log(err);
-            }
-            if(rs.affectedRows == 0){
-                result(err, 'Not found');
-            }
-            else{
-                result(err, rs);
-            }
-            
-        }
+        [id]
     );
 }
 
+Anime.activateOne = async (id) => {
+    return await promisePool.execute(`
+        UPDATE tb_anime
+        SET Activate = 1
+        WHERE idAnime = ?
+        `, 
+        [id]
+    );
+}
 
 module.exports = Anime;
+
+    // let genre = [];
+    
+    // await Genre.getAGOA(id, rows => {
+    //     genre = rows;
+    // });

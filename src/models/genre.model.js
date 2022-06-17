@@ -31,15 +31,14 @@ Genre.getAAOG = (id, result) => {
 }
 
 // AllGenreOfAnime
-Genre.getAGOA = async (id, result) => {  
-    const [rows, fields] = await promisePool.execute(`
-        SELECT tb_genre.idGenre, tb_genre.Genre, tb_genre.GenreSlug FROM tb_genre_anime 
+Genre.getAGOA = async (id) => {  
+    return await promisePool.execute(`
+        SELECT tb_genre.idGenre, tb_genre.Genre, tb_genre.GenreSlug FROM tb_genre_anime
         INNER JOIN tb_genre 
         ON tb_genre_anime.idGenre = tb_genre.idGenre 
         WHERE tb_genre_anime.idAnime = ?`, 
         [id]
     );
-    result(rows);
 }
 
 
