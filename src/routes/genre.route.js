@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getAll, getAAOG } = require('../controllers/genre.controller')
+const GenreController = require('../controllers/genre.controller')
 
-router.get('/all', getAll);
-router.get('/anime-of-genre/:id', getAAOG);
+router.get('/all', GenreController.getAll);
+router.post('/', GenreController.createOne);
+router.get('/anime-of-genre/:id', GenreController.getAAOG);
+router.get('/:id', GenreController.getInformation);
 
 
 module.exports = router;

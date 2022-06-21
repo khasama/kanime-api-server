@@ -1,33 +1,40 @@
 const pool = require('./db');
 const promisePool = pool.promise();
+const slug = require('slug');
 
-const Genre = (genre) => {
-    this.Genre = genre.genre;
-    this.GenreSlug = genre.genreSlug;
+function Genre(genre){
+    this.genre = genre.genre;
+    this.genreslug = slug(genre.genre);
 };
 
-Genre.getAll = (result) => {
-    pool.execute("SELECT * FROM tb_genre", (err, rows, fields) => {
-        if(err){
-            console.log(err);
-        }
-        result(err, rows);
-    });
+Genre.getAll = async () => {
+    return await promisePool.execute("SELECT * FROM tb_genre");
+}
+
+Genre.getInformation = async (id) => {
+    return await promisePool.execute("SELECT * FROM tb_genre WHERE idGenre = ?", [id]);
+}
+
+Genre.createOne = async (genre) => {
+    return await promisePool.execute(`
+        INSERT INTO tb_genre
+        VALUES (NULL, ?, ?)
+        `,
+        [
+            genre.genre,
+            genre.genreslug
+        ]
+    );
 }
 
 // AllAnimeOfGenre
-Genre.getAAOG = (id, result) => {  
-    pool.execute(`
+Genre.getAAOG = async (id) => {  
+    return await promisePool.execute(`
         SELECT * FROM tb_genre_anime 
         INNER JOIN tb_anime
         ON tb_genre_anime.idAnime = tb_anime.idAnime
         WHERE tb_genre_anime.idGenre = ?
-    `, [id], (err, rows, fields) => {
-        if(err){
-            console.log(err);
-        }     
-        result(err, rows);
-    });
+    `, [id]);
 }
 
 // AllGenreOfAnime

@@ -7,3 +7,85 @@
     <input type="file" name="imagebg" accept="image/png, image/gif, image/jpeg"><br>
     <button type="submit">submit</button>
 </form>
+
+<hr>
+
+<form action="http://localhost:3456/api/v1/anime/update/119" method="post" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="name" id="uname"> <br>
+    <input type="text" name="othername" placeholder="othername" id="uothername"> <br>
+    <input type="text" name="content" placeholder="content" id="ucontent"> <br>
+    <input type="number" name="year" placeholder="year" id="uyear"><br>
+    <input type="number" name="view" placeholder="view" id="uview"><br>
+    <input type="number" name="liked" placeholder="liked" id="uliked"><br>
+    <input type="number" name="mainserver" placeholder="mainserver" id="umainserver"><br>
+    <input type="number" name="status" placeholder="status" id="ustatus"><br>
+    <input type="file" name="nimage" id="uimage"><br>
+    <input type="file" name="nimagebg" id="uimagebg"><br>
+    <input type="hidden" name="image" id="cimage"> <br>
+    <input type="hidden" name="imagebg" id="cimagebg"> <br>
+    <button type="submit">submit</button>
+</form>
+
+<button id="btn-update">
+    Update
+</button>
+
+<script>
+    fetch('http://localhost:3456/api/v1/anime/119')
+    .then(response => response.json())
+    .then(data => {
+        const anime = data.data
+        document.getElementById("uname").value = anime.Name;
+        document.getElementById("uothername").value = anime.OtherName;
+        document.getElementById("ucontent").value = anime.Content;
+        document.getElementById("uyear").value = anime.idYear;
+        document.getElementById("uview").value = data.data.View;
+        document.getElementById("uliked").value = data.data.Liked;
+        document.getElementById("umainserver").value = data.data.MainServer;
+        document.getElementById("ustatus").value = data.data.idStatus;
+        document.getElementById("cimage").value = data.data.Image;
+        document.getElementById("cimagebg").value = data.data.ImageBG;
+    });
+
+    document.querySelector("#btn-update").addEventListener('click', () => {
+        
+        const formData = new FormData();
+        const image = document.querySelector('#uimage');
+        const imagebg = document.querySelector('#uimagebg');
+        
+
+        formData.append('name', document.getElementById("uname").value);
+        formData.append('othername', document.getElementById("uothername").value);
+        formData.append('content', document.getElementById("ucontent").value);
+        formData.append('year', document.getElementById("uyear").value);
+        formData.append('view', document.getElementById("uview").value);
+        formData.append('liked', document.getElementById("uliked").value);
+        formData.append('mainserver', document.getElementById("umainserver").value);
+        formData.append('status', document.getElementById("ustatus").value);
+        formData.append('imagebg', document.getElementById("cimagebg").value);
+        formData.append('image', document.getElementById("cimage").value);
+
+        if(image.files[0] != undefined){
+            formData.append('nimage', image.files[0]);
+        }
+        if(imagebg.files[0] != undefined){
+            formData.append('nimagebg', imagebg.files[0]);
+        }
+
+        console.log(formData.get('nimagebg'));
+
+        // formData.append('avatar', image.files[0]);
+
+        fetch('http://localhost:3456/api/v1/anime/update/119', {
+            method: 'PUT',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Success:', result);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+</script>

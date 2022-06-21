@@ -42,9 +42,9 @@ Anime.createOne = async (anime) => {
     );
 }
 
-Anime.updateOne = (anime, result) => {
+Anime.updateOne = async (anime) => {
 
-    pool.execute(`
+    return await promisePool.execute(`
         UPDATE tb_anime
         SET Name = ?,
             OtherName = ?,
@@ -72,13 +72,21 @@ Anime.updateOne = (anime, result) => {
             anime.mainserver,
             anime.status,
             anime.id
-        ],
-        (err, rs) => {
-            result(err, rs);
-        }
+        ]
     );
 }
 
+Anime.addGenre = async (data) => {
+    return await promisePool.execute(`
+        INSERT INTO tb_genre_anime
+        VALUES (NULL, ?, ?)
+        `,
+        [
+            data.idAnime,
+            data.idGenre
+        ]
+    )
+}
 
 Anime.getAll = async () => {
     return await promisePool.execute(`
@@ -124,9 +132,3 @@ Anime.activateOne = async (id) => {
 }
 
 module.exports = Anime;
-
-    // let genre = [];
-    
-    // await Genre.getAGOA(id, rows => {
-    //     genre = rows;
-    // });
