@@ -5,6 +5,7 @@ const AnimeController = require('../controllers/anime.controller');
 router.get('/all', AnimeController.getAll);
 router.post('/', AnimeController.createOne);
 router.post('/add-genre', AnimeController.addGenre);
+router.delete('/delete-genre', AnimeController.deleteGenre);
 router.put('/update/:id', AnimeController.updateOne);
 router.put('/activate/:id', AnimeController.activateOne);
 router.delete('/delete/:id', AnimeController.deleteSoft);

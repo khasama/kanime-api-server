@@ -85,7 +85,28 @@ Anime.addGenre = async (data) => {
             data.idAnime,
             data.idGenre
         ]
-    )
+    );
+}
+
+Anime.deleteGenre = async (id) => {
+    return await promisePool.execute(`
+        DELETE FROM tb_genre_anime
+        WHERE idGA = ?
+        `,
+        [id]
+    );
+}
+
+Anime.checkGenre = async (data) => {
+    return await promisePool.execute(`
+        SELECT idGA FROM tb_genre_anime
+        WHERE idAnime = ? AND idGenre = ?
+        `,
+        [
+            data.idAnime,
+            data.idGenre
+        ]
+    );
 }
 
 Anime.getAll = async () => {

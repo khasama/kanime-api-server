@@ -98,5 +98,17 @@ AnimeController.addGenre = async (req, res, next) => {
         return res.status(500).json({message: "Failed", error: "Has a fucking error"});
     }
 }
+AnimeController.deleteGenre = async (req, res, next) => {
+    const data = {
+        idGA: req.body.idGA,
+        idAnime: req.body.idAnime
+    }
+    try {
+        const rs = await (AnimeService.deleteGenre(data));
+        return res.status(200).json(rs);
+    } catch (err) {
+        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+    }
+}
 
 module.exports = AnimeController;

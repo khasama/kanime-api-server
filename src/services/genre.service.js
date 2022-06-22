@@ -21,6 +21,17 @@ GenreService.createOne = async (data) => {
         return {message: "Success", data: genre};
     }
     return {message: "Failed", error: "Can not create"};
+}
+
+GenreService.deleteOne = async (id) => {
+    const [anime] = await GenreModel.getAAOG(id);
+    if(anime.length == 0){
+        const [rows] = await GenreModel.deleteOne(id);
+        if(rows.affectedRows != 0){
+            return {message: "Success", result: "Delete success"};
+        }
+    }
+    return {message: "Failed", error: "Genre is being used"};
     
 }
 

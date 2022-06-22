@@ -1,10 +1,10 @@
-const GenreService = require('../services/genre.service');
+const SeasonService = require('../services/season.service');
 
-const GenreController = {}
+const SeasonController = {}
 
-GenreController.getAll = async (req, res, next) => {
+SeasonController.getAll = async (req, res, next) => {
     try {
-        const rs = await GenreService.getAll();
+        const rs = await SeriesService.getAll();
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
@@ -12,10 +12,10 @@ GenreController.getAll = async (req, res, next) => {
     }
 }
 
-GenreController.createOne = async (req, res, next) => {
+SeasonController.createOne = async (req, res, next) => {
     try {
-        const data = {genre: req.body.genre};
-        const rs = await GenreService.createOne(data);
+        const data = {series: req.body.series};
+        const rs = await SeriesService.createOne(data);
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
@@ -23,10 +23,24 @@ GenreController.createOne = async (req, res, next) => {
     }
 }
 
-GenreController.deleteOne = async (req, res, next) => {
+SeasonController.updateOne = async (req, res, next) => {
+    try {
+        const data = {
+            id: req.params.id,
+            series: req.body.series
+        };
+        const rs = await SeriesService.updateOne(data);
+        return res.status(200).json(rs);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+    }
+}
+
+SeasonController.deleteOne = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const rs = await GenreService.deleteOne(id);
+        const rs = await SeriesService.deleteOne(id);
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
@@ -34,10 +48,10 @@ GenreController.deleteOne = async (req, res, next) => {
     }
 }
 
-GenreController.getAAOG = async (req, res, next) => {
+SeasonController.getASS = async (req, res, next) => {
     const id = req.params.id
     try {
-        const rs = await GenreService.getAAOG(id);
+        const rs = await SeriesService.getASS(id);
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
@@ -45,15 +59,4 @@ GenreController.getAAOG = async (req, res, next) => {
     }
 }
 
-GenreController.getInformation = async (req, res, next) => {
-    const id = req.params.id
-    try {
-        const rs = await GenreService.getInformation(id);
-        return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
-}
-
-module.exports = GenreController;
+module.exports = SeasonController;

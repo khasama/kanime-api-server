@@ -102,8 +102,9 @@ AnimeService.updateOne = async (data, files) => {
     if(imageCheck && imagebgCheck){
         const [rows] = await(AnimeModel.updateOne(anime));
         if(rows.affectedRows == 1){  
+            const [genre] = await GenreModel.getAGOA(data.id);
             const [anime] = await AnimeModel.getInformation(data.id);
-            return {message: "Success", data:anime};
+            return {message: "Success", data:{...anime[0], ...{Genre:genre}}};
         }
     }
     return {message: "Failed", error:error}
@@ -134,13 +135,26 @@ AnimeService.activateOne = async (id) => {
 }
 
 AnimeService.addGenre = async (data) => {
-    const [rows] = await AnimeModel.addGenre(data);
-    if(rows.insertId > 0){
+    const [hasGenre] = await AnimeModel.checkGenre(data);
+    if(hasGenre.length == 0){
+        const [rows] = await AnimeModel.addGenre(data);
+        if(rows.insertId > 0){
+            const [genre] = await GenreModel.getAGOA(data.idAnime);
+            const [anime] = await AnimeModel.getInformation(data.idAnime);
+            return {message:"Success", data:{...anime[0], ...{Genre:genre}}};
+        }
+    }
+    return {message: "Failed", error: "Genre already exist"};
+}
+
+AnimeService.deleteGenre = async (data) => {
+    const rows = await AnimeModel.deleteGenre(data.idGA);
+    if(rows.affectedRows != 0){
         const [genre] = await GenreModel.getAGOA(data.idAnime);
         const [anime] = await AnimeModel.getInformation(data.idAnime);
         return {message:"Success", data:{...anime[0], ...{Genre:genre}}};
     }
-    return {message: "Failed", result: "Can not add"};
+    return {message: "Failed", error: "Errorrrrrrrrrr"};
 }
 
 
