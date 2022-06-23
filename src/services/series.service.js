@@ -33,7 +33,7 @@ SeriesService.deleteOne = async (id) => {
             return {message: "Success", result: "Delete success"};
         }
     }
-    return {message: "Failed", error: "Can not create"};
+    return {message: "Failed", error: "Can not delete"};
 }
 
 SeriesService.getASS = async (id) => {

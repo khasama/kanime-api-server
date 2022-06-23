@@ -1,4 +1,4 @@
-<form action="http://localhost:3456/api/v1/anime/" method="post" enctype="multipart/form-data">
+<!-- <form action="http://localhost:3456/api/v1/anime/" method="post" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="name"> <br>
     <input type="text" name="othername" placeholder="othername"> <br>
     <input type="text" name="content" placeholder="content"> <br>
@@ -6,7 +6,7 @@
     <input type="file" name="image" accept="image/png, image/gif, image/jpeg"><br>
     <input type="file" name="imagebg" accept="image/png, image/gif, image/jpeg"><br>
     <button type="submit">submit</button>
-</form>
+</form> -->
 
 <hr>
 
@@ -34,6 +34,10 @@
         <button id="btn-update">
             Update
         </button>
+        <p>
+            Phần: <span id="anime-season"></span> -- Series: <span id="anime-series"></span>
+            <button id="detele-season" onclick="deleteSeason(this)">Remove</button>
+        </p>
     </div>
 
     <div >
@@ -43,8 +47,72 @@
 
         <hr>
 
-        <div id="series">
+        <div>
+            <h4 style="margin: 0;">Series</h4>
+            <div>
+                Add
+                <input type="text" placeholder="Series" id="input-series">
+                <button id="add-series">Add</button>
+                |
+                Update
+                <select name="" id="series-list-a"></select>
+                <input type="text" placeholder="Series" id="input-useries">
+                <button id="update-series">Update</button>
+                |
+                Delete
+                <select name="" id="series-list-b"></select>
+                <button id="detele-series">Delete</button>
+            </div>
 
+            <div id="series"></div>
+
+        </div>
+
+        <hr>
+
+        <div>
+            <span>Add season: </span>
+            <select name="" id="select-series">
+            </select>
+            <input type="text" name="" id="season" placeholder="Season">
+            <button id="add-season" >Add</button>
+        </div>
+
+        <hr>
+
+        <div>
+            <h4 style="margin: 0;">Server</h4>
+            <div>
+                Add
+                <input type="text" placeholder="Server" id="input-server">
+                <input type="text" placeholder="Server description" id="input-description">
+                <button id="add-server">Add</button>
+                |
+                Update
+                <select name="" id="server-list-a"></select>
+                <input type="text" placeholder="Server" id="input-userver">
+                <input type="text" placeholder="Server description" id="input-udescription">
+                <button id="update-server">Update</button>
+                |
+                Delete
+                <select name="" id="server-list-b"></select>
+                <button id="detele-server">Delete</button>
+            </div>
+
+            <div id="servers"></div>
+        </div>
+        <hr>
+        <div>
+            <table style="border: 1px solid;width: 100%;">
+                <thead>
+                    <tr id="tb-head-episode">
+                        
+                    </tr>
+                </thead>
+
+                <tbody id="full-episode">
+                </tbody>
+            </table>
         </div>
 
     </div>
@@ -53,7 +121,11 @@
 
 
 <script>
-    fetch('http://localhost:3456/api/v1/anime/119')
+    const idAnime = 119;
+    getSeason();
+    getSeries();
+    getServer();
+    fetch(`http://localhost:3456/api/v1/anime/${idAnime}`)
     .then(response => response.json())
     .then(data => {
         const anime = data.data;
@@ -73,18 +145,87 @@
         });
     });
 
-    fetch('http://localhost:3456/api/v1/series/all')
-    .then(response => response.json())
-    .then(data => {
-        const seri = data.data;
-        const series = document.getElementById("series");
-        seri.forEach(ele => {
-            series.insertAdjacentHTML('beforeend', `
-                <a href="javascript:void(0)" onclick="addSeries(this)" data-id="${ele.idSeries}" style="margin-right:10px;">${ele.Series}</a> 
-                `
-            );
+    function getSeason(){
+        fetch(`http://localhost:3456/api/v1/season/${idAnime}`)
+        .then(response => response.json())
+        .then(data => {
+            if(data.message == "Failed"){
+                document.getElementById("anime-season").innerText = "None";
+                document.getElementById("anime-series").innerText = "None";
+                document.getElementById("detele-season").style.display = "None";
+            }
+            else{
+                const s = data.data[0];
+                document.getElementById("anime-season").innerText = s.Season;
+                document.getElementById("anime-series").innerText = s.Series;
+                document.getElementById("detele-season").style.display = "Block";
+                document.getElementById("detele-season").setAttribute("data-id", s.idSeason);
+            }
         });
-    });
+    }
+
+    function getServer(){
+        fetch(`http://localhost:3456/api/v1/server/all`)
+        .then(response => response.json())
+        .then(data => {
+            const server = data.data;
+            const serverList = document.getElementById("servers");
+            const a = document.getElementById("server-list-a");
+            const b = document.getElementById("server-list-b");
+            const tb = document.getElementById("tb-head-episode");
+            serverList.innerHTML = "";
+            a.innerHTML = "";
+            b.innerHTML = "";
+            tb.innerHTML = `<th style='border: 1px solid; width: 12%;'>Episode</th>`;
+            server.forEach(ele => {
+                serverList.insertAdjacentHTML('beforeend', `
+                    <a href="javascript:void(0)" style="margin-right:10px;" title="${ele.ServerDescription}" >${ele.Server}</a> 
+                    `
+                );
+
+                a.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`
+                );
+                b.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`
+                );
+                tb.insertAdjacentHTML('beforeend', `<th style="border: 1px solid; width: 12%;">${ele.Server}</th>`
+                );
+            });
+        });
+    }
+
+    function getSeries(){
+        fetch('http://localhost:3456/api/v1/series/all')
+        .then(response => response.json())
+        .then(data => {
+            const seri = data.data;
+            const series = document.getElementById("series");
+            const a = document.getElementById("select-series");
+            const b = document.getElementById("series-list-a");
+            const c = document.getElementById("series-list-b");
+            series.innerHTML = '';
+            a.innerHTML = '';
+            b.innerHTML = '';
+            c.innerHTML = '';
+            seri.forEach(ele => {
+                series.insertAdjacentHTML('beforeend', `
+                    <a href="javascript:void(0)" onclick="addSeries(this)" data-id="${ele.idSeries}" style="margin-right:10px;">${ele.Series}</a> 
+                    `
+                );
+                a.insertAdjacentHTML('beforeend', `
+                    <option value="${ele.idSeries}">${ele.Series}</option> 
+                    `
+                );
+                b.insertAdjacentHTML('beforeend', `
+                    <option value="${ele.idSeries}">${ele.Series}</option> 
+                    `
+                );
+                c.insertAdjacentHTML('beforeend', `
+                    <option value="${ele.idSeries}">${ele.Series}</option> 
+                    `
+                );
+            });
+        });
+    }
 
     document.querySelector("#btn-update").addEventListener('click', () => {
         
@@ -110,13 +251,14 @@
             formData.append('nimagebg', imagebg.files[0]);
         }
 
-        fetch('http://localhost:3456/api/v1/anime/update/119', {
+        fetch(`http://localhost:3456/api/v1/anime/update/${idAnime}`, {
             method: 'PUT',
             body: formData
         })
         .then(response => response.json())
         .then(result => {
             const anime = result.data;
+            alert(result.message);
             setData(anime);
         })
         .catch(error => {
@@ -131,11 +273,12 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({idGA, idAnime:119})
+            body: JSON.stringify({idGA, idAnime})
         })
         .then(response => response.json())
         .then(result => {
             const anime = result.data;
+            alert(result.message);
             setData(anime);
             
         })
@@ -166,6 +309,8 @@
                 `
             );
         });
+
+        getEp(idAnime, anime.MainServer);
     }
 
     function addGenre(ele){
@@ -175,7 +320,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({anime:119, genre:idGenre})
+            body: JSON.stringify({anime:idAnime, genre:idGenre})
         })
         .then(response => response.json())
         .then(result => {
@@ -183,6 +328,7 @@
                 alert(result.error);
             }else{
                 const anime = result.data;
+                alert(result.message);
                 setData(anime);
             }
         })
@@ -190,5 +336,199 @@
             console.error('Error:', error);
         });
     }
+
+    document.querySelector("#add-season").addEventListener('click', () => {
+        const idSeries = document.getElementById("select-series").value;
+        const season = document.getElementById("season").value;
+        fetch('http://localhost:3456/api/v1/season/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({idAnime, idSeries, season})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getSeason();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
     
+    function deleteSeason(ele){
+        const id = ele.getAttribute("data-id");
+        fetch(`http://localhost:3456/api/v1/season/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Success"){
+                alert(result.message);
+                getSeason();
+            }
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    document.querySelector("#add-series").addEventListener('click', () => {
+        const series = document.getElementById("input-series").value;
+        fetch('http://localhost:3456/api/v1/series/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({series})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getSeries();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false)
+
+    document.querySelector("#detele-series").addEventListener('click', () => {
+        const idSeries = document.getElementById("series-list-b").value;
+        fetch(`http://localhost:3456/api/v1/series/delete/${idSeries}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getSeries();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    document.querySelector("#add-server").addEventListener('click', () => {
+        const server = document.getElementById("input-server").value;
+        const description = document.getElementById("input-description").value;
+        fetch('http://localhost:3456/api/v1/server/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({server, description})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getServer();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    document.querySelector("#update-server").addEventListener('click', () => {
+        const id = document.getElementById("server-list-a").value;
+        const server = document.getElementById("input-userver").value;
+        const description = document.getElementById("input-udescription").value;
+        fetch(`http://localhost:3456/api/v1/server/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({server, description})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getServer();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    document.querySelector("#update-series").addEventListener('click', () => {
+        const id = document.getElementById("series-list-a").value;
+        const series = document.getElementById("input-useries").value;
+        fetch(`http://localhost:3456/api/v1/series/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({series})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getSeries();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    document.querySelector("#detele-server").addEventListener('click', () => {
+        const id = document.getElementById("server-list-b").value;
+        fetch(`http://localhost:3456/api/v1/server/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                getServer();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+</script>
+
+<script>
+    function getEp(idAnime, idServer){
+        const tbb = document.querySelector("#full-episode");
+        fetch(`http://localhost:3456/api/v1/episode/get-ep/${idAnime}-${idServer}`)
+        .then(response => response.json())
+        .then(result => {
+            const eps = result.data;
+            eps.forEach(ele => {
+                tbb.insertAdjacentHTML('beforeend', `<tr>${ele.Episode}</tr>`);
+            });
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 </script>
