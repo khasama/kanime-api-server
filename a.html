@@ -105,12 +105,51 @@
         <div>
             <table style="border: 1px solid;width: 100%;">
                 <thead>
-                    <tr id="tb-head-episode">
-                        
+                    <tr>
+                        <th style="border: 1px solid; width: 10%;">Episode</th>
+                        <th style="border: 1px solid;">Information: <span id="anime-name"></span></th>
                     </tr>
                 </thead>
 
-                <tbody id="full-episode">
+                <tbody>
+                    <tr style="height: 500px;">
+                       <td id="full-episode" style="border: 1px solid; height: 100%; overflow-y: scroll;">
+                       </td> 
+
+                       <td>
+                            <div style="width:100%; height: 500px; display: none;" id="episode-infor">
+                                <div style="display: flex;">
+                                    <iframe src="" 
+                                        frameborder="0" allowfullscreen id="player" frameborder="0" width="50%" height="320px">
+                                    </iframe>
+                                    <div style="padding: 5px;">
+                                        Server: <input type="text" name="" id="ep-server" disabled style="margin-bottom: 5px;"> <br>
+                                        Episode: <input type="text" name="" id="episode" disabled style="margin-bottom: 5px;"> <br>
+                                        Link: <input type="text" name="" id="link" style="margin-bottom: 5px;"> <br>
+                                        <input type="hidden" id="id-ep">
+                                        <button id="update-link">Update</button> | <button id="delete-link">Delete</button>
+        
+                                    </div>
+                                </div>
+                                <hr>
+                                <div id="server-list-c">
+                                    
+                                </div>
+                                <hr>
+                                <div>
+                                    <select name="" id="server-list-d"></select>
+                                    <input type="text" id="link-input" placeholder="Link">
+                                    <button id="add-link">Add</button> |
+                                </div>
+                                
+                            </div>
+                       </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border: 1px solid; text-align: center;">
+                            <a href="javascript:void(0)">Thêm</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -172,23 +211,23 @@
             const serverList = document.getElementById("servers");
             const a = document.getElementById("server-list-a");
             const b = document.getElementById("server-list-b");
-            const tb = document.getElementById("tb-head-episode");
+            const d = document.getElementById("server-list-d");
+            
             serverList.innerHTML = "";
             a.innerHTML = "";
             b.innerHTML = "";
-            tb.innerHTML = `<th style='border: 1px solid; width: 12%;'>Episode</th>`;
+            d.innerHTML = "";
+            
             server.forEach(ele => {
                 serverList.insertAdjacentHTML('beforeend', `
                     <a href="javascript:void(0)" style="margin-right:10px;" title="${ele.ServerDescription}" >${ele.Server}</a> 
                     `
                 );
 
-                a.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`
-                );
-                b.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`
-                );
-                tb.insertAdjacentHTML('beforeend', `<th style="border: 1px solid; width: 12%;">${ele.Server}</th>`
-                );
+                a.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                b.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                d.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                
             });
         });
     }
@@ -290,6 +329,7 @@
     function setData(anime){
         const url = "http://localhost:3456/public/anime/"
         document.getElementById("uname").value = anime.Name;
+        document.getElementById("anime-name").innerText = anime.Name;
         document.getElementById("uothername").value = anime.OtherName;
         document.getElementById("ucontent").value = anime.Content;
         document.getElementById("uyear").value = anime.idYear;
@@ -522,13 +562,159 @@
         .then(response => response.json())
         .then(result => {
             const eps = result.data;
+            console.log(eps);
             eps.forEach(ele => {
-                tbb.insertAdjacentHTML('beforeend', `<tr>${ele.Episode}</tr>`);
+                tbb.insertAdjacentHTML('beforeend', 
+                `<a href='javascript:void(0)' data-anime='${idAnime}' data-episode='${ele.Episode}' onclick='getFullUrl(this, ${JSON.stringify(ele)})'
+                    style='display: block;text-align: center;border-bottom: 1px solid;'>
+                    ${ele.Episode}
+                </a>`);
             });
             
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.log('Error:', error);
         });
     }
+
+    function getFullUrl(ele, data){
+        const anime = ele.getAttribute("data-anime");
+        const episode = ele.getAttribute("data-episode");
+        fetch(`http://localhost:3456/api/v1/episode/get-furl/${anime}-${episode}`)
+        .then(response => response.json())
+        .then(result => {
+            const rs =result.data;
+            setEpisodeInfor(rs, data);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+
+    }
+
+    function setEpisodeInfor(rs, data){
+        document.getElementById("episode-infor").style.display = "block";
+        document.getElementById("ep-server").value = data.Server;
+        document.getElementById("episode").value = data.Episode;
+        document.getElementById("id-ep").value = data.idEpisode;
+        document.getElementById("link").value = data.Link;
+        document.getElementById("player").setAttribute("src", data.Link);
+        const c = document.getElementById("server-list-c");
+        c.innerHTML = "";
+        rs.forEach(ele => {
+            c.insertAdjacentHTML('beforeend', `
+                <a href="javascript:void(0)" data-id="${ele.idEpisode}" onclick='changeServer(this)'
+                    style="border: 1px solid; margin-right: 5px; padding: 5px 8px">
+                    ${ele.Server}
+                </a>
+                `
+            );
+        });
+    }
+
+    document.querySelector("#update-link").addEventListener('click', () => {
+        const id = document.getElementById("id-ep").value;
+        const link = document.getElementById("link").value;
+        fetch(`http://localhost:3456/api/v1/episode/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({link})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                document.getElementById("link").value = link;
+                document.getElementById("player").setAttribute("src", link);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    document.querySelector("#add-link").addEventListener('click', () => {
+        const server = document.getElementById("server-list-d").value;
+        const episode = document.getElementById("episode").value;
+        const link = document.getElementById("link-input").value;
+        fetch(`http://localhost:3456/api/v1/episode/add/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({anime: idAnime, server, episode, link})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                fetch(`http://localhost:3456/api/v1/episode/get-furl/${idAnime}-${episode}`)
+                .then(response => response.json())
+                .then(res => {
+                    const rs = res.data;
+                    const c = document.getElementById("server-list-c");
+                    c.innerHTML = "";
+                    rs.forEach(ele => {
+                        c.insertAdjacentHTML('beforeend', `
+                            <a href="javascript:void(0)" data-id="${ele.idEpisode}" onclick='changeServer(this)'
+                                style="border: 1px solid; margin-right: 5px; padding: 5px 8px">
+                                ${ele.Server}
+                            </a>
+                            `
+                        );
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }, false);
+
+    function changeServer(ele) {
+        const id = ele.getAttribute("data-id");
+        fetch(`http://localhost:3456/api/v1/episode/get-link/${id}`)
+        .then(response => response.json())
+        .then(result => {
+            const data = result.data[0];
+            document.getElementById("ep-server").value = data.Server;
+            document.getElementById("id-ep").value = data.idEpisode;
+            document.getElementById("link").value = data.Link;
+            document.getElementById("player").setAttribute("src", data.Link);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    document.querySelector("#delete-link").addEventListener('click', () => {
+        const id = document.getElementById("id-ep").value;
+        fetch(`http://localhost:3456/api/v1/episode/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.message == "Failed"){
+                alert(result.error);
+            }else{
+                alert(result.message);
+                document.getElementById("link").value = link;
+                document.getElementById("player").setAttribute("src", link);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+    }, false);
 </script>

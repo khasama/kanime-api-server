@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(upload());
 app.use(cors({
-    origin: "*"
+    origin: "http://127.0.0.1:5500"
 }));
 app.use("/public/anime", express.static("./src/uploads/anime"));
 
