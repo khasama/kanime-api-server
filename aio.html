@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="Genres">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Genres
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="Genres"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Genre</th>
+                                    <th scope="col">Slug</th>
+                                    <th scope="col">
+                                        <a href="javascript:void(0)" data-bs-toggle='modal' data-bs-target='#createGenreModal'>
+                                            <img src="https://img.icons8.com/material-outlined/24/000000/add.png"/>
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="genre-tb-list">
+                            </tbody>
+                        </table>
+
+                        <div class="modal fade" id="updateGenreModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="genre"></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="genre" class="form-label">Genre: </label>
+                                            <input type="text" id="update-genre-input" class="form-control">
+                                            <input type="hidden" id="update-idgenre-input">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="updateGenre()" data-bs-dismiss="modal">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="createGenreModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Create Genre</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                                        aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="genre" class="form-label">Genre: </label>
+                                            <input type="text" id="create-genre-input" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-success" onclick="createGenre()" data-bs-dismiss="modal">Create</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Series
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="Series"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Series</th>
+                                    <th scope="col">
+                                        <a href="javascript:void(0)" data-bs-toggle='modal' data-bs-target='#createSeriesModal'>
+                                            <img src="https://img.icons8.com/material-outlined/24/000000/add.png"/>
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="series-tb-list">
+                            </tbody>
+                        </table>
+
+                        <div class="modal fade" id="updateSeriesModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="series"></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="genre" class="form-label">Series: </label>
+                                            <input type="text" id="update-series-input" class="form-control">
+                                            <input type="hidden" id="update-idseries-input">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="updateSeries()" data-bs-dismiss="modal">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="createSeriesModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Create Series</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                                        aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="series" class="form-label">Series: </label>
+                                            <input type="text" id="create-series-input" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-success" onclick="createSeries()" data-bs-dismiss="modal">Create</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="Servers">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Servers
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="Servers"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
+                        collapse plugin adds the appropriate classes that we use to style each element. These classes
+                        control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                        modify any of this with custom CSS or overriding our default variables. It's also worth noting
+                        that just about any HTML can go within the <code>.accordion-body</code>, though the transition
+                        does limit overflow.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="Anime">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Anime
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="Anime"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
+                        collapse plugin adds the appropriate classes that we use to style each element. These classes
+                        control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                        modify any of this with custom CSS or overriding our default variables. It's also worth noting
+                        that just about any HTML can go within the <code>.accordion-body</code>, though the transition
+                        does limit overflow.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="Episode">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Episode
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the
+                        collapse plugin adds the appropriate classes that we use to style each element. These classes
+                        control the overall appearance, as well as the showing and hiding via CSS transitions. You can
+                        modify any of this with custom CSS or overriding our default variables. It's also worth noting
+                        that just about any HTML can go within the <code>.accordion-body</code>, though the transition
+                        does limit overflow.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous">
+    </script>
+
+
+    <script>
+        getGenre();
+        function getGenre(){
+            fetch('http://localhost:3456/api/v1/genre/all')
+            .then(response => response.json())
+            .then(data => {
+                const genres = data.data;
+                const genreTb = document.getElementById("genre-tb-list");
+                genreTb.innerHTML = '';
+                genres.forEach(ele => {
+                    genreTb.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td scope="row">${ele.idGenre}</td>    
+                            <td>${ele.Genre}</td>
+                            <td>${ele.GenreSlug}</td>
+                            <td>
+                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                onclick="setDataGenre(this)" data-bs-toggle='modal' data-bs-target='#updateGenreModal'>
+                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                </a>
+                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idGenre}" 
+                                onclick="deleteGenre(this)">
+                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                </a>
+                            </td>
+                        </tr>
+                        `
+                    );
+                });
+            });
+        }
+        
+        function setDataGenre(ele){
+            const data = JSON.parse(ele.getAttribute("data-infor"));
+            document.getElementById("genre").innerText = data.Genre;
+            document.getElementById("update-genre-input").value = data.Genre;
+            document.getElementById("update-idgenre-input").value = data.idGenre;
+        }
+        
+        function updateGenre(){
+            const genre = document.getElementById("update-genre-input").value.trim();
+            const id = document.getElementById("update-idgenre-input").value.trim();
+            if (genre) {
+                fetch(`http://localhost:3456/api/v1/genre/update/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({genre})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Success"){
+                        alert(result.message);
+                        getGenre();
+                    }else{
+                        alert(result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert("Not emty");
+            }
+        }
+    
+        function createGenre(){
+            const genre = document.getElementById("create-genre-input").value.trim();
+            if (genre) {
+                fetch('http://localhost:3456/api/v1/genre/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({genre})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        getGenre();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert("Not emty");
+            }
+        }
+        
+        function deleteGenre(ele){
+            if (confirm("Delete this ???")) {
+                const id = ele.getAttribute("data-id");
+                fetch(`http://localhost:3456/api/v1/genre/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        getGenre();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+    
+    </script>
+
+    <script>
+        getSeries();
+        function getSeries(){
+            fetch('http://localhost:3456/api/v1/series/all')
+            .then(response => response.json())
+            .then(data => {
+                const series = data.data;
+                const seriesTb = document.getElementById("series-tb-list");
+                seriesTb.innerHTML = '';
+                series.forEach(ele => {
+                    seriesTb.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td>${ele.idSeries}</td>    
+                            <td>${ele.Series}</td>
+                            <td>
+                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                onclick="setDataSeries(this)" data-bs-toggle='modal' data-bs-target='#updateSeriesModal'>
+                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                </a>
+                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idSeries}" 
+                                onclick="deleteSeries(this)">
+                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                </a>
+                            </td>
+                        </tr>
+                        `
+                    );
+                });
+            });
+        }
+        
+        function setDataSeries(ele){
+            const data = JSON.parse(ele.getAttribute("data-infor"));
+            document.getElementById("series").innerText = data.Series;
+            document.getElementById("update-series-input").value = data.Series;
+            document.getElementById("update-idseries-input").value = data.idSeries;
+        }
+        
+        function updateSeries(){
+            const series = document.getElementById("update-series-input").value.trim();
+            const id = document.getElementById("update-idseries-input").value.trim();
+            if(series){
+                fetch(`http://localhost:3456/api/v1/series/update/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({series})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Success"){
+                        alert(result.message);
+                        getSeries();
+                    }else{
+                        alert(result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }else{
+                alert("Not emty");
+            }
+        }
+
+        function createSeries(){
+            const series = document.getElementById("create-series-input").value.trim();
+            if(series){
+                fetch('http://localhost:3456/api/v1/series/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({series})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        getSeries();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }else{
+                alert("Not emty");
+            }
+        }
+        
+        function deleteSeries(ele){
+            if (confirm("Delete this ???")) {
+                const id = ele.getAttribute("data-id");
+                fetch(`http://localhost:3456/api/v1/series/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        getSeries();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+    </script>
+</body>
+
+</html>

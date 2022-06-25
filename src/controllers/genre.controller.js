@@ -56,4 +56,16 @@ GenreController.getInformation = async (req, res, next) => {
     }
 }
 
+GenreController.updateOne = async (req, res, next) => {
+    const data = {
+        id: req.params.id,
+        genre: req.body.genre
+    }
+    GenreService.updateOne(data).then(rs => {
+        return res.status(200).json(rs);
+    }).catch(err => {
+        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+    });
+}
+
 module.exports = GenreController;

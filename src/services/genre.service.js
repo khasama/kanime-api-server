@@ -41,4 +41,10 @@ GenreService.getAAOG = async (id) => {
     return {message: "Failed", error:"Not found"};
 }
 
+GenreService.updateOne = async (data) => {
+    const [rows] = await GenreModel.updateOne(data);
+    if(rows.affectedRows > 0) return {message: "Success"};
+    return {message: "Failed", error:"Not found"};
+}
+
 module.exports = GenreService;

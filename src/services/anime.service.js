@@ -1,7 +1,7 @@
 const AnimeModel = require('../models/anime.model');
 const GenreModel = require('../models/genre.model');
 const slug = require('slug');
-const { checkIsImage } = require('../utils/');
+const { checkIsImage, uploadToAWS } = require('../utils/');
 const fs = require('fs');
 
 const AnimeService = {}
@@ -27,11 +27,21 @@ AnimeService.createOne = async (data, files) => {
         if(rows.affectedRows == 1){
             image.mv(`./src/uploads/anime/${newImage}`, (err) => {
                 if(err) return err;
+                uploadToAWS({path: `./src/uploads/anime/${newImage}`, name: newImage})
+                .then(rs => {
+                    console.log(rs);
+                })
+                .catch(err => console.log(err));
             });
             imagebg.mv(`./src/uploads/anime/${newImageBG}`, (err) => {
                 if(err) return err;
+                uploadToAWS({path: `./src/uploads/anime/${newImageBG}`, name: newImageBG})
+                .then(rs => {
+                    console.log(rs);
+                })
+                .catch(err => console.log(err));
             });
-            const [anime] = await AnimeModel.getInformation(rows.insertId);
+            // const [anime] = await AnimeModel.getInformation(rows.insertId);
             return {message: "Success", data:anime};
         } 
     }

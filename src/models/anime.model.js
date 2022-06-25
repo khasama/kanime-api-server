@@ -125,6 +125,8 @@ Anime.getInformation = async (id) => {
         ON tb_anime.idStatus = tb_status.idStatus
         INNER JOIN tb_year
         ON tb_anime.idYear = tb_year.idYear
+        INNER JOIN tb_server
+        ON tb_anime.MainServer = tb_server.idServer
         WHERE tb_anime.idAnime = ?
         `, 
         [id]

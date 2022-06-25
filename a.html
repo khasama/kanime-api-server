@@ -1,4 +1,4 @@
-<!-- <form action="http://localhost:3456/api/v1/anime/" method="post" enctype="multipart/form-data">
+<form action="http://localhost:3456/api/v1/anime/" method="post" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="name"> <br>
     <input type="text" name="othername" placeholder="othername"> <br>
     <input type="text" name="content" placeholder="content"> <br>
@@ -6,7 +6,7 @@
     <input type="file" name="image" accept="image/png, image/gif, image/jpeg"><br>
     <input type="file" name="imagebg" accept="image/png, image/gif, image/jpeg"><br>
     <button type="submit">submit</button>
-</form> -->
+</form>
 
 <hr>
 
@@ -147,7 +147,11 @@
                     </tr>
                     <tr>
                         <td colspan="2" style="border: 1px solid; text-align: center;">
-                            <a href="javascript:void(0)">Thêm</a>
+                            <input type="text" disabled id="add-server-input">
+                            <input type="text" id="add-ep-input" placeholder="Episode">
+                            <input type="text" id="add-ep-link-input" placeholder="Link">
+                            <input type="hidden" id="id-server-add-ep">
+                            <button id="add-ep">Thêm</button>
                         </td>
                     </tr>
                 </tbody>
@@ -351,6 +355,9 @@
         });
 
         getEp(idAnime, anime.MainServer);
+        document.getElementById("add-server-input").value = anime.Server;
+        document.getElementById("id-server-add-ep").value = anime.idServer;
+
     }
 
     function addGenre(ele){
@@ -556,16 +563,17 @@
 </script>
 
 <script>
+    let dataEpisode;
     function getEp(idAnime, idServer){
         const tbb = document.querySelector("#full-episode");
+        tbb.innerHTML = "";
         fetch(`http://localhost:3456/api/v1/episode/get-ep/${idAnime}-${idServer}`)
         .then(response => response.json())
         .then(result => {
             const eps = result.data;
-            console.log(eps);
             eps.forEach(ele => {
                 tbb.insertAdjacentHTML('beforeend', 
-                `<a href='javascript:void(0)' data-anime='${idAnime}' data-episode='${ele.Episode}' onclick='getFullUrl(this, ${JSON.stringify(ele)})'
+                `<a href='javascript:void(0)' data-infor='${JSON.stringify(ele)}' onclick='getFullUrl(this)'
                     style='display: block;text-align: center;border-bottom: 1px solid;'>
                     ${ele.Episode}
                 </a>`);
@@ -577,14 +585,15 @@
         });
     }
 
-    function getFullUrl(ele, data){
-        const anime = ele.getAttribute("data-anime");
-        const episode = ele.getAttribute("data-episode");
+    function getFullUrl(ele){
+        dataEpisode = JSON.parse(ele.getAttribute("data-infor"));
+        const anime = dataEpisode.idAnime;
+        const episode = dataEpisode.Episode;
         fetch(`http://localhost:3456/api/v1/episode/get-furl/${anime}-${episode}`)
         .then(response => response.json())
         .then(result => {
             const rs =result.data;
-            setEpisodeInfor(rs, data);
+            setEpisodeInfor(rs);
         })
         .catch(err => {
             console.log(err);
@@ -592,13 +601,13 @@
 
     }
 
-    function setEpisodeInfor(rs, data){
+    function setEpisodeInfor(rs){
         document.getElementById("episode-infor").style.display = "block";
-        document.getElementById("ep-server").value = data.Server;
-        document.getElementById("episode").value = data.Episode;
-        document.getElementById("id-ep").value = data.idEpisode;
-        document.getElementById("link").value = data.Link;
-        document.getElementById("player").setAttribute("src", data.Link);
+        document.getElementById("ep-server").value = dataEpisode.Server;
+        document.getElementById("episode").value = dataEpisode.Episode;
+        document.getElementById("id-ep").value = dataEpisode.idEpisode;
+        document.getElementById("link").value = dataEpisode.Link;
+        document.getElementById("player").setAttribute("src", dataEpisode.Link);
         const c = document.getElementById("server-list-c");
         c.innerHTML = "";
         rs.forEach(ele => {
@@ -698,9 +707,46 @@
     }
 
     document.querySelector("#delete-link").addEventListener('click', () => {
-        const id = document.getElementById("id-ep").value;
-        fetch(`http://localhost:3456/api/v1/episode/delete/${id}`, {
-            method: 'DELETE'
+        if (confirm("Delete this ???")) {
+            const id = document.getElementById("id-ep").value;
+            fetch(`http://localhost:3456/api/v1/episode/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.message == "Failed"){
+                    alert(result.error);
+                }else{
+                    alert(result.message);
+                    fetch(`http://localhost:3456/api/v1/episode/get-furl/${dataEpisode.idAnime}-${dataEpisode.Episode}`)
+                    .then(response => response.json())
+                    .then(r => {
+                        const rs =r.data;
+                        setEpisodeInfor(rs);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+    }, false);
+
+    document.querySelector("#add-ep").addEventListener('click', () => {
+        const episode = document.getElementById("add-ep-input").value;
+        const server = document.getElementById("id-server-add-ep").value;
+        const link = document.getElementById("add-ep-link-input").value;
+
+        fetch(`http://localhost:3456/api/v1/episode/add/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({anime: idAnime, server, episode, link})
         })
         .then(response => response.json())
         .then(result => {
@@ -708,13 +754,13 @@
                 alert(result.error);
             }else{
                 alert(result.message);
-                document.getElementById("link").value = link;
-                document.getElementById("player").setAttribute("src", link);
+                getEp(idAnime, server);
+                
             }
         })
         .catch(error => {
             console.error('Error:', error);
         });
-
     }, false);
+
 </script>

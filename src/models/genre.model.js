@@ -27,6 +27,21 @@ Genre.createOne = async (genre) => {
     );
 }
 
+Genre.updateOne = async (data) => {
+    return await promisePool.execute(`
+        UPDATE tb_genre
+        SET Genre = ?,
+            GenreSlug = ?
+        WHERE idGenre = ?
+        `,
+        [
+            data.genre,
+            slug(data.genre),
+            data.id
+        ]
+    );
+}
+
 Genre.deleteOne = async (id) => {
     return await promisePool.execute(`
         DELETE FROM tb_genre
