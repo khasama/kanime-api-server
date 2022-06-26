@@ -6,46 +6,51 @@ const fs = require('fs');
 
 const AnimeService = {}
 
-AnimeService.createOne = async (data, files) => {
-    const image = files.image;
-    const imagebg = files.imagebg;
-
-    if(checkIsImage(image) && checkIsImage(imagebg)){
-        const newImage = `${slug(data.name)}-${Date.now()}.${image.mimetype.split("/")[1]}`;
-        const newImageBG = `${slug(data.name)}-bg-${Date.now()}.${imagebg.mimetype.split("/")[1]}`;
-        const anime = new AnimeModel(
-            {
-                name: data.name,
-                othername: data.othername,
-                year: data.year,
-                content: data.content,
-                image: newImage,
-                imagebg: newImageBG
-            }
-        );
-        const [rows] = await(AnimeModel.createOne(anime));
-        if(rows.affectedRows == 1){
-            image.mv(`./src/uploads/anime/${newImage}`, (err) => {
-                if(err) return err;
+AnimeService.createOne = async (data) => {
+    const image = data.image;
+    const imagebg = data.imagebg;
+    const bufImg = Buffer.from(image, 'base64');
+    const bufImgBG = Buffer.from(imagebg, 'base64');
+    const newImage = `${slug(data.name)}-${Date.now()}.webp`;
+    const newImageBG = `${slug(data.name)}-bg-${Date.now()}.webp`;
+    const anime = new AnimeModel(
+        {
+            name: data.name,
+            othername: data.othername,
+            year: data.year,
+            content: data.content,
+            image: newImage,
+            imagebg: newImageBG
+        }
+    );
+    const [rows] = await(AnimeModel.createOne(anime));
+    if(rows.insertId > 0){
+        fs.writeFile(`./src/uploads/anime/${newImage}`, bufImg, (err) => {
+            if(!err){
                 uploadToAWS({path: `./src/uploads/anime/${newImage}`, name: newImage})
                 .then(rs => {
-                    console.log(rs);
+                    fs.unlink(`./src/uploads/anime/${rs.Key}`, (e) => {
+                        if (e) throw new Error(e.message);
+                    });
                 })
                 .catch(err => console.log(err));
-            });
-            imagebg.mv(`./src/uploads/anime/${newImageBG}`, (err) => {
-                if(err) return err;
+            }
+        });
+        fs.writeFile(`./src/uploads/anime/${newImageBG}`, bufImgBG, (err) => {
+            if(!err){
                 uploadToAWS({path: `./src/uploads/anime/${newImageBG}`, name: newImageBG})
                 .then(rs => {
-                    console.log(rs);
+                    fs.unlink(`./src/uploads/anime/${rs.Key}`, (e) => {
+                        if (e) throw new Error(e.message);
+                    });
                 })
                 .catch(err => console.log(err));
-            });
-            // const [anime] = await AnimeModel.getInformation(rows.insertId);
-            return {message: "Success", data:anime};
-        } 
-    }
-    return {message: "Failed", error: "Only image"};
+            }
+        });
+
+        const [anime] = await AnimeModel.getInformation(rows.insertId);
+        return {message: "Success", data:anime};
+    } 
     
 }
 
@@ -66,42 +71,50 @@ AnimeService.updateOne = async (data, files) => {
         status: data.status,
         image: data.image,
         imagebg: data.imagebg
-    };
+    }
     if(files != null){
         if(files.nimage != undefined && checkIsImage(files.nimage)){
             const image = files.nimage;
-            const newImage = `${slug(data.name)}-${Date.now()}.${image.mimetype.split("/")[1]}`;
-            anime.image = newImage;
+            const newImage = data.image;
             image.mv(`./src/uploads/anime/${newImage}`, (err) => {
                 if(err){
                     imageCheck = false;
                     error.push(err);
                 }else{
-                    fs.unlink(`./src/uploads/anime/${data.image}`, (e) => {
-                        if (e){
-                            imageCheck = false;
-                            error.push(err);
-                        }
+                    uploadToAWS({path: `./src/uploads/anime/${newImage}`, name: newImage})
+                    .then(rs => {
+                        fs.unlink(`./src/uploads/anime/${newImage}`, (e) => {
+                            if (e) throw new Error(e.message);
+                        });
+                    })
+                    .catch(err => {
+                        imageCheck = false;
+                        error.push(err);
+                        console.log(err);
                     });
+                    
                 } 
             });
             
         }
         if(files.nimagebg != undefined && checkIsImage(files.nimagebg)){
-            
             const imagebg = files.nimagebg;
-            const newImageBG = `${slug(data.name)}-bg-${Date.now()}.${imagebg.mimetype.split("/")[1]}`;
-            anime.imagebg = newImageBG;
+            const newImageBG = data.imagebg;
             imagebg.mv(`./src/uploads/anime/${newImageBG}`, (err) => {
                 if(err){
                     imagebgCheck = false;
                     error.push(err);
                 }else{
-                    fs.unlink(`./src/uploads/anime/${data.imagebg}`, (e) => {
-                        if (e) {
-                            imagebgCheck = false;
-                            error.push(err);
-                        }
+                    uploadToAWS({path: `./src/uploads/anime/${newImageBG}`, name: newImageBG})
+                    .then(rs => {
+                        fs.unlink(`./src/uploads/anime/${newImageBG}`, (e) => {
+                            if (e) throw new Error(e.message);
+                        });
+                    })
+                    .catch(err => {
+                        imagebgCheck = false;
+                        error.push(err);
+                        console.log(err)
                     });
                 }
                 

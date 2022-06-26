@@ -114,8 +114,31 @@ Anime.getAll = async () => {
         SELECT * FROM tb_anime
         INNER JOIN tb_status 
         ON tb_anime.idStatus = tb_status.idStatus
+        ORDER BY tb_anime.idAnime ASC
         `
     );
+}
+
+// anime same status
+Anime.getASS = async (id, all) => {
+    if(all){
+        return await promisePool.execute(`
+            SELECT * FROM tb_anime
+            INNER JOIN tb_status 
+            ON tb_anime.idStatus = tb_status.idStatus
+            WHERE tb_anime.idStatus = ?
+            `
+            [id]
+        );
+    }
+    return await promisePool.execute(`
+        SELECT * FROM tb_anime
+        WHERE idStatus = ?
+        LIMIT 0, 1
+        `,
+        [id]
+    );
+    
 }
 
 Anime.getInformation = async (id) => {

@@ -1,10 +1,12 @@
 const AnimeService = require('../services/anime.service');
+const fs = require('fs');
 
 const AnimeController = {}
 
 AnimeController.createOne = async (req, res, next) => {
-    const files = req.files;
-    if(files == null || files.image == undefined || files.imagebg == undefined){
+    const image = req.body.image;
+    const imagebg = req.body.imagebg;
+    if(image == undefined || imagebg == undefined){
         return res.status(400).json({message: "Failed", error: "Missing image"});
     }
     try {
@@ -12,9 +14,11 @@ AnimeController.createOne = async (req, res, next) => {
             name: req.body.name,
             othername: req.body.othername,
             content: req.body.content,
-            year: req.body.year
+            year: req.body.year,
+            image: req.body.image,
+            imagebg: req.body.imagebg
         }
-        const rs = await AnimeService.createOne(data, files);
+        const rs = await AnimeService.createOne(data);
         return res.status(200).json(rs);
     } catch (err) {
         console.log(err);

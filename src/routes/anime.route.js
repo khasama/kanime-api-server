@@ -11,5 +11,4 @@ router.put('/activate/:id', AnimeController.activateOne);
 router.delete('/delete/:id', AnimeController.deleteSoft);
 router.get('/:id', AnimeController.getInformation);
 
-
 module.exports = router;
