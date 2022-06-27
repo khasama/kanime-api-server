@@ -54,13 +54,10 @@ AnimeService.createOne = async (data) => {
     
 }
 
-AnimeService.updateOne = async (data, files) => {
-    let imageCheck = true;
-    let imagebgCheck = true;
-    let error = [];
+AnimeService.updateOne = async (data, id) => {
 
-    let anime = {
-        id: data.id,
+    const anime = {
+        id: id,
         name: data.name,
         othername: data.othername,
         year: data.year,
@@ -69,68 +66,53 @@ AnimeService.updateOne = async (data, files) => {
         liked: data.liked,
         mainserver: data.mainserver,
         status: data.status,
-        image: data.image,
-        imagebg: data.imagebg
-    }
-    if(files != null){
-        if(files.nimage != undefined && checkIsImage(files.nimage)){
-            const image = files.nimage;
-            const newImage = data.image;
-            image.mv(`./src/uploads/anime/${newImage}`, (err) => {
-                if(err){
-                    imageCheck = false;
-                    error.push(err);
-                }else{
-                    uploadToAWS({path: `./src/uploads/anime/${newImage}`, name: newImage})
-                    .then(rs => {
-                        fs.unlink(`./src/uploads/anime/${newImage}`, (e) => {
-                            if (e) throw new Error(e.message);
-                        });
-                    })
-                    .catch(err => {
-                        imageCheck = false;
-                        error.push(err);
-                        console.log(err);
-                    });
-                    
-                } 
-            });
-            
-        }
-        if(files.nimagebg != undefined && checkIsImage(files.nimagebg)){
-            const imagebg = files.nimagebg;
-            const newImageBG = data.imagebg;
-            imagebg.mv(`./src/uploads/anime/${newImageBG}`, (err) => {
-                if(err){
-                    imagebgCheck = false;
-                    error.push(err);
-                }else{
-                    uploadToAWS({path: `./src/uploads/anime/${newImageBG}`, name: newImageBG})
-                    .then(rs => {
-                        fs.unlink(`./src/uploads/anime/${newImageBG}`, (e) => {
-                            if (e) throw new Error(e.message);
-                        });
-                    })
-                    .catch(err => {
-                        imagebgCheck = false;
-                        error.push(err);
-                        console.log(err)
-                    });
-                }
-                
-            });
-        }
+        image: data.oimg,
+        imagebg: data.oimgbg
     }
 
-    if(imageCheck && imagebgCheck){
+    if(data.nimg != undefined){
+        const bufImg = Buffer.from(data.nimg, 'base64');
+        const nameImg = data.oimg;
+        fs.writeFile(`./src/uploads/anime/${nameImg}`, bufImg, (err) => {
+            if(!err){
+                uploadToAWS({path: `./src/uploads/anime/${nameImg}`, name: nameImg})
+                .then(rs => {
+                    fs.unlink(`./src/uploads/anime/${rs.Key}`, (e) => {
+                        if (e) throw new Error(e.message);
+                    });
+                    
+                    // console.log(rs.Key);
+                })
+                .catch(err => console.log(err));
+            }
+        });
+    }
+    if(data.nimgbg != undefined){
+        const bufImgBg = Buffer.from(data.nimgbg, 'base64');
+        const nameImgBg = data.oimgbg;
+        fs.writeFile(`./src/uploads/anime/${nameImgBg}`, bufImgBg, (err) => {
+            if(!err){
+                uploadToAWS({path: `./src/uploads/anime/${nameImgBg}`, name: nameImgBg})
+                .then(rs => {
+                    fs.unlink(`./src/uploads/anime/${rs.Key}`, (e) => {
+                        if (e) throw new Error(e.message);
+                    });
+                    // console.log(rs.Key);
+                })
+                .catch(err => console.log(err));
+            }
+        });
+    }
+    try {
         const [rows] = await(AnimeModel.updateOne(anime));
         if(rows.affectedRows == 1){  
-            const [genre] = await GenreModel.getAGOA(data.id);
-            const [anime] = await AnimeModel.getInformation(data.id);
+            const [genre] = await GenreModel.getAGOA(id);
+            const [anime] = await AnimeModel.getInformation(id);
             return {message: "Success", data:{...anime[0], ...{Genre:genre}}};
         }
+    } catch (error) {
+        return {message: "Failed", error:error}
     }
-    return {message: "Failed", error:error}
 }
 
 AnimeService.getAll = async () => {

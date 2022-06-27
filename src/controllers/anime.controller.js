@@ -27,22 +27,10 @@ AnimeController.createOne = async (req, res, next) => {
 }
 
 AnimeController.updateOne = async (req, res, next) => {
-    const files = req.files;
+    let data = req.body.data;
+    const id = req.params.id;
     try {
-        const data = {
-            name: req.body.name,
-            othername: req.body.othername,
-            content: req.body.content,
-            year: req.body.year,
-            view: req.body.view,
-            liked: req.body.liked,
-            mainserver: req.body.mainserver,
-            status: req.body.status,
-            image: req.body.image,
-            imagebg: req.body.imagebg,
-            id: req.params.id
-        }
-        const rs = await AnimeService.updateOne(data, files);
+        const rs = await AnimeService.updateOne(data, id);
         return res.status(200).json(rs);
     } catch (err) {
         console.log(err);

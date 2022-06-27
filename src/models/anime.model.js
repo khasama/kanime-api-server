@@ -141,6 +141,28 @@ Anime.getASS = async (id, all) => {
     
 }
 
+// anime same year
+Anime.getASY = async (id, all) => {
+    if(all){
+        return await promisePool.execute(`
+            SELECT * FROM tb_anime
+            INNER JOIN tb_year
+            ON tb_anime.idYear = tb_year.idYear
+            WHERE tb_anime.idYear = ?
+            `
+            [id]
+        );
+    }
+    return await promisePool.execute(`
+        SELECT * FROM tb_anime
+        WHERE idYear = ?
+        LIMIT 0, 1
+        `,
+        [id]
+    );
+    
+}
+
 Anime.getInformation = async (id) => {
     return await promisePool.execute(`
         SELECT * FROM tb_anime 
