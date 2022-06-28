@@ -111,7 +111,8 @@ Anime.checkGenre = async (data) => {
 
 Anime.getAll = async () => {
     return await promisePool.execute(`
-        SELECT * FROM tb_anime
+        SELECT tb_anime.idAnime, tb_anime.Name, tb_anime.Activate, tb_status.Status, tb_anime.MainServer
+        FROM tb_anime
         INNER JOIN tb_status 
         ON tb_anime.idStatus = tb_status.idStatus
         ORDER BY tb_anime.idAnime ASC

@@ -17,6 +17,10 @@
             padding: 0;
             box-sizing: border-box;
         }
+        a {
+            text-decoration: none;
+            color: #000;
+        }
     </style>
 </head>
 
@@ -412,7 +416,7 @@
                         Anime
                     </button>
                 </h2>
-                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="Anime"
+                <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="Anime"
                     data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <table class="table table-striped">
@@ -594,6 +598,103 @@
                             </div>
                         </div>
 
+                        <div class="modal fade" id="episodeModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: 80%;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Episode</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                                        aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex">
+                                            <div style="width: 10%; text-align: center;">
+                                                <h4>List ep</h4>
+                                                <hr>
+                                                <div class="d-flex p-1" style="flex-direction: column; height: 550px; overflow-y: scroll;" id="list-eps">
+                                                    
+                                                </div>
+                                                <button data-bs-target='#addEpisodeModal' data-bs-toggle='modal' class="w-100 mt-2 btn btn-warning">
+                                                    <img src="https://img.icons8.com/ios/30/000000/plus--v1.png"/>
+                                                </button>
+                                            </div>
+                                            <div style="width: 90%;">
+                                                <div style="text-align: center;">
+                                                    <h4 id="name-anime"></h4>
+                                                    <hr>
+                                                </div>
+                                                <div id="episode-info" style="height: 550px; display: none;">
+                                                    <div style="background-color: #3d3d3d; width: 60%;">
+                                                        <iframe frameborder="0" allowfullscreen id="player" width="100%" height="70%">
+                                                        </iframe>
+                                                        <hr>
+                                                        <div id="list-sever-ep" class="p-2">
+                                                        </div>
+                                                    </div>
+                                                    <div style="width: 40%;">
+                                                        <div class="p-2">
+                                                            <h5 class="text-center">Update</h5>
+                                                            <div class="mt-3">
+                                                                <label for="episode" class="d-inline form-label ">Episode: </label>
+                                                                <input type="text" id="ep-input" class="d-inline w-75 form-control" disabled>
+                                                            </div>
+                                                            <div class="mt-3">
+                                                                <label for="server" class="d-inline form-label ">Server: </label>
+                                                                <input type="text" id="serverlink-input" class=" d-inline w-75 form-control" disabled>
+                                                            </div>
+                                                            <label for="link" class="form-label">Link: </label>
+                                                            <input type="text" id="update-link-input" class="form-control">
+                                                            <input type="hidden" id="update-idep-input" class="form-control">
+                                                            <div class="mt-3 text-center">
+                                                                <button class="d-inline btn btn-secondary" id="update-link" onclick="updateLink()">Update</button>
+                                                                <button class="d-inline btn btn-danger" id="delete-link"  onclick="deleteLink()">Delete</button>
+                                                            </div>
+                                                            <hr class="m-2">
+                                                            <div>
+                                                                <h5 class="text-center">Add</h5>
+                                                                <div class="mt-3">
+                                                                    <label for="server" class="d-inline form-label ">Server: </label>
+                                                                    <select id="add-serverlink-select" class="d-inline w-75 form-control"></select>
+                                                                </div>
+                                                                <label for="link" class="form-label">Link: </label>
+                                                                <input type="text" id="add-link-input" class="form-control">
+                                                                <button class="mt-2 btn btn-success" onclick="addLink()">Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="addEpisodeModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add Episode</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="ep" class="form-label">Episode: </label>
+                                            <input type="text" id="add-ep-input" class="form-control">
+                                            <label for="genre" class="form-label">Link: </label>
+                                            <input type="text" id="add-eplink-input" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="addEpisode()">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -601,7 +702,7 @@
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                        Episode
+                        Slide
                     </button>
                 </h2>
                 <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingThree"
@@ -1340,8 +1441,8 @@
                                 onclick="deleteAnimeSoft(this)">
                                     <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
                                 </a>
-                                <a href="javascript:void(0)" class="btn btn-primary" data-genres="${JSON.stringify(ele.Genre)}" 
-                                onclick="deleteAnimeSoft(this)">
+                                <a href="javascript:void(0)" class="btn btn-primary" data-server="${ele.MainServer}" data-anime="${ele.idAnime}" 
+                                data-name="${ele.Name}" onclick="getFullEpisode(this)" data-bs-target='#episodeModal' data-bs-toggle='modal'>
                                     <img src="https://img.icons8.com/ios-glyphs/30/000000/list--v1.png"/>
                                 </a>
                             </td>
@@ -1374,6 +1475,7 @@
 
                     const y = document.getElementById("update-year-select").childNodes;
                     y.forEach(ele => {
+                        ele.removeAttribute("selected");
                         if(ele.getAttribute("value") == anime.idYear){
                             ele.setAttribute("selected", true);
                         }
@@ -1381,6 +1483,7 @@
 
                     const ms = document.getElementById("update-mainserver-select").childNodes;
                     ms.forEach(ele => {
+                        ele.removeAttribute("selected");
                         if(ele.getAttribute("value") == anime.MainServer){
                             ele.setAttribute("selected", true);
                         }
@@ -1388,6 +1491,7 @@
 
                     const stt = document.getElementById("update-status-select").childNodes;
                     stt.forEach(ele => {
+                        ele.removeAttribute("selected");
                         if(ele.getAttribute("value") == anime.idStatus){
                             console.log(ele);
                             ele.setAttribute("selected", true);
@@ -1452,7 +1556,8 @@
                     // const anime = result.data;
                     // console.log(anime);
                     alert(result.message);
-                    location.reload();
+                    getAnime();
+                    $('#updateAnimeModal').modal('hide');
                 })
                 .catch(error => {
                     console.log('Error:', error);
@@ -1497,26 +1602,250 @@
             }
         }
         
-        // function deleteServer(ele){
-        //     if (confirm("Delete this ???")) {
-        //         const id = ele.getAttribute("data-id");
-        //         fetch(`http://localhost:3456/api/v1/server/delete/${id}`, {
-        //             method: 'DELETE'
-        //         })
-        //         .then(response => response.json())
-        //         .then(result => {
-        //             if(result.message == "Failed"){
-        //                 alert(result.error);
-        //             }else{
-        //                 alert(result.message);
-        //                 getServer();
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        //     }
-        // }
+        function deleteSoftAnime(ele){
+            if (confirm("Delete this ???")) {
+                const id = ele.getAttribute("data-id");
+                fetch(`http://localhost:3456/api/v1/anime/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        getAnime();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+    </script>
+
+    <script>
+        let Ep = {};
+        let mainLink;
+        function getFullEpisode(ele){
+            document.getElementById("episode-info").style.display = "none";
+            const anime = ele.getAttribute("data-anime");
+            const server = ele.getAttribute("data-server");
+            const name = ele.getAttribute("data-name");
+            document.getElementById("name-anime").innerText = name;
+            Ep.idAnime = anime;
+            Ep.idServer = server;
+            setListEp(anime, server);
+
+        }
+
+        function setListEp(anime, server){
+            fetch(`http://localhost:3456/api/v1/episode/get-ep/${anime}-${server}`)
+            .then(response => response.json())
+            .then(result => {
+                const eps = result.data;
+                const listEp = document.getElementById("list-eps");
+                listEp.innerHTML = '';
+                eps.forEach(ele => {
+                    listEp.insertAdjacentHTML('beforeend', `
+                        <a href='javascript:void(0)' class='mb-1 btn btn-primary' data-info='${JSON.stringify(ele)}' onclick='getFullUrl(this)'>
+                            ${ele.Episode}
+                        </a>
+                    `);
+                });
+            })
+            .catch(err => {console.log(err)});
+        }
+
+        function getFullUrl(ele) {
+            document.getElementById("episode-info").style.display = "flex";
+            const data = JSON.parse(ele.getAttribute("data-info"));
+            mainLink = data;
+            setDataEpisode(mainLink);
+            fetch('http://localhost:3456/api/v1/server/all')
+            .then(response => response.json())
+            .then(data => {
+                const servers = data.data;
+                const serverSl = document.getElementById("add-serverlink-select");
+                serverSl.innerHTML = '';
+                servers.forEach(ele => {
+                    serverSl.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                });
+            });
+        }
+
+        function getLink(ele){
+            const id = ele.getAttribute("data-id");
+            fetch(`http://localhost:3456/api/v1/episode/get-link/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                const info = result.data[0];
+                setDataEpisode(info);
+            })
+            .catch(err => {console.log(err)});
+        }
+
+        function setDataEpisode(data){
+            document.getElementById("player").setAttribute("src", data.Link);
+            document.getElementById("ep-input").value = data.Episode;
+            document.getElementById("serverlink-input").value = data.Server;
+            document.getElementById("update-link-input").value = data.Link;
+            document.getElementById("update-idep-input").value = data.idEpisode;
+
+            fetch(`http://localhost:3456/api/v1/episode/get-furl/${data.idAnime}-${data.Episode}`)
+            .then(response => response.json())
+            .then(result => {
+                const links = result.data;
+                const listLink = document.getElementById("list-sever-ep");
+                listLink.innerHTML = '';
+                links.forEach(ele => {
+                    listLink.insertAdjacentHTML('beforeend', `
+                        <a href="javascript:void(0)" class="mr-1 btn btn-primary" data-id="${ele.idEpisode}" onclick="getLink(this)">${ele.Server}</a>
+                    `);
+                });
+                
+            })
+            .catch(err => {console.log(err)});
+        }
+
+        function updateLink(){
+            const link = document.getElementById("update-link-input").value;
+            const id = document.getElementById("update-idep-input").value;
+            if(link){
+                fetch(`http://localhost:3456/api/v1/episode/update/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({link})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        document.getElementById("update-link-input").value = link;
+                        document.getElementById("player").setAttribute("src", link);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }else{
+                alert("Not emty !!!");
+            }
+        }
+
+        function deleteLink(){
+            if(confirm("Delete this ???")){
+                const id = document.getElementById("update-idep-input").value;
+                fetch(`http://localhost:3456/api/v1/episode/delete/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        if(mainLink.idEpisode == id){
+                            document.getElementById("episode-info").style.display = "none";
+                            setListEp(Ep.idAnime, Ep.idServer);
+                        }
+                        setDataEpisode(mainLink);
+                        
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                
+            }
+        }
+
+        function addLink(){
+            const episode = document.getElementById("ep-input").value;
+            const link = document.getElementById("add-link-input");
+            const server = document.getElementById("add-serverlink-select").value;
+            if(link.value){
+                fetch(`http://localhost:3456/api/v1/episode/add/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({anime: Ep.idAnime, server, episode, link:link.value})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        link.value = '';
+                        fetch(`http://localhost:3456/api/v1/episode/get-furl/${Ep.idAnime}-${episode}`)
+                        .then(response => response.json())
+                        .then(rs => {
+                            const links = rs.data;
+                            const listLink = document.getElementById("list-sever-ep");
+                            listLink.innerHTML = '';
+                            links.forEach(ele => {
+                                listLink.insertAdjacentHTML('beforeend', `
+                                    <a href="javascript:void(0)" class="mr-1 btn btn-primary" data-id="${ele.idEpisode}" onclick="getLink(this)">${ele.Server}</a>
+                                `);
+                            });
+                            
+                        })
+                        .catch(err => {console.log(err)});
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }else{
+                alert("Not emty");
+            }
+        }
+
+        function addEpisode(){
+            const episode = document.getElementById("add-ep-input");
+            const link = document.getElementById("add-eplink-input");
+            if(episode.value && link.value){
+                fetch(`http://localhost:3456/api/v1/episode/add/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        anime: Ep.idAnime, 
+                        server: Ep.idServer, 
+                        episode: episode.value, 
+                        link: link.value
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        episode.value = '';
+                        link.value = '';
+                        setListEp(Ep.idAnime, Ep.idServer);
+                        $('#addEpisodeModal').modal('hide');
+                        $('#episodeModal').modal('show');
+                        
+                    }
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+            }else{
+                alert("Not emty !!!!");
+            }
+        }
+
 
     </script>
 
