@@ -481,7 +481,7 @@
                                             <div class="mt-3 d-flex">
                                                 <div class="w-50">
                                                     <label for="image" class="form-label d-inline">Image: </label>
-                                                    <input type="file" class="d-inline w-75 form-control" id="update-image">
+                                                    <input type="file" class="d-inline w-75 form-control" id="update-image" accept="image/*">
                                                     <button class="d-inline btn btn-success" id="update-crop-img">Save</button>
                                                 
                                                     <div class="d-flex mt-2">
@@ -503,7 +503,7 @@
                                             <div class="mt-3 d-flex">
                                                 <div class="w-50">
                                                     <label for="background" class="form-label d-inline">Background: </label>
-                                                    <input type="file" class="d-inline w-50 form-control" id="update-background">
+                                                    <input type="file" class="d-inline w-50 form-control" id="update-background" accept="image/*">
                                                     <button class="d-inline btn btn-success" id="update-crop-imgbg">Save</button>
                                                     <div>
                                                         <b>Old</b> <br>
@@ -560,7 +560,7 @@
                                             <div class="mt-3 d-flex">
                                                 <div class="w-50">
                                                     <label for="image" class="form-label d-inline">Image: </label>
-                                                    <input type="file" class="d-inline w-75 form-control" id="create-image">
+                                                    <input type="file" class="d-inline w-75 form-control" id="create-image" accept="image/*">
                                                     <button class="d-inline btn btn-success" id="create-crop-img">Save</button>
                                                     <div class="mt-2">
                                                         <b class="d-inline">Image</b>  <br>
@@ -575,7 +575,7 @@
                                             <div class="mt-3 d-flex">
                                                 <div class="w-50">
                                                     <label for="background" class="form-label d-inline">Background: </label>
-                                                    <input type="file" class="d-inline w-50 form-control" id="create-background">
+                                                    <input type="file" class="d-inline w-50 form-control" id="create-background" accept="image/*">
                                                     <button class="d-inline btn btn-success" id="create-crop-imgbg">Save</button>
                                                     <div class="mt-2">
                                                         <b class="d-inline">New</b>  <br>
@@ -690,6 +690,44 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <button type="button" class="btn btn-primary" onclick="addEpisode()">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="animeGenreModal" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" style="max-width: 50%;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Genres: <span id="an"></span></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <div id="list-genre-anime" class="d-flex align-content-start flex-wrap">
+                                                
+                                            </div>
+                                            <hr>
+                                            <div>
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">ID</th>
+                                                            <th scope="col">Genre</th>
+                                                            <th scope="col">
+                                                                <a href="javascript:void(0)">
+                                                                    <img src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/20/000000/external-setting-essentials-pack-tanah-basah-glyph-tanah-basah.png"/>
+                                                                </a>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="genre-tb-list-b">
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -825,7 +863,9 @@
             .then(data => {
                 const genres = data.data;
                 const genreTb = document.getElementById("genre-tb-list");
+                const genreTbb = document.getElementById("genre-tb-list-b");
                 genreTb.innerHTML = '';
+                genreTbb.innerHTML = '';
                 genres.forEach(ele => {
                     genreTb.insertAdjacentHTML('beforeend', `
                         <tr>
@@ -840,6 +880,19 @@
                                 <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idGenre}" 
                                 onclick="deleteGenre(this)">
                                     <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                </a>
+                            </td>
+                        </tr>
+                        `
+                    );
+                    genreTbb.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td scope="row">${ele.idGenre}</td>    
+                            <td>${ele.Genre}</td>
+                            <td>
+                                <a href="javascript:void(0)" class="btn btn-secondary" data-id="${ele.idGenre}" 
+                                onclick="addAnimeGenre(this)">
+                                    <img src="https://img.icons8.com/external-simple-solid-edt.graphics/30/000000/external-Plus-add-and-remove-simple-solid-edt.graphics.png"/>
                                 </a>
                             </td>
                         </tr>
@@ -1433,17 +1486,25 @@
                             <td>${ele.Status}</td>
                             <td>${ele.Activate}</td>
                             <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-id='${ele.idAnime}'
+                                <a href='javascript:void(0)' class='btn btn-info' data-id='${ele.idAnime}' title="update"
                                 onclick="setDataAnime(this)" data-bs-toggle='modal' data-bs-target='#updateAnimeModal'>
                                     <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
                                 </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idAnime}" 
-                                onclick="deleteAnimeSoft(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
                                 <a href="javascript:void(0)" class="btn btn-primary" data-server="${ele.MainServer}" data-anime="${ele.idAnime}" 
-                                data-name="${ele.Name}" onclick="getFullEpisode(this)" data-bs-target='#episodeModal' data-bs-toggle='modal'>
+                                data-name="${ele.Name}" onclick="getFullEpisode(this)" data-bs-target='#episodeModal' data-bs-toggle='modal' title="episode">
                                     <img src="https://img.icons8.com/ios-glyphs/30/000000/list--v1.png"/>
+                                </a>
+                                <a href='javascript:void(0)' class='btn btn-warning' data-id='${ele.idAnime}' title="genre"
+                                onclick="showAnimeGenre(this)" data-bs-toggle='modal' data-bs-target='#animeGenreModal'>
+                                    <img src="https://img.icons8.com/ios-filled/30/000000/category.png"/>
+                                </a>
+                                <a href='javascript:void(0)' class='btn btn-success' data-id='${ele.idAnime}' title="season"
+                                onclick="checkAnimeSeason(this)">
+                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/movie--v1.png"/>
+                                </a>
+                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idAnime}" 
+                                onclick="deleteAnimeSoft(this)" title="delete">
+                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
                                 </a>
                             </td>
                         </tr>
@@ -1628,6 +1689,7 @@
     <script>
         let Ep = {};
         let mainLink;
+        let idAnime;
         function getFullEpisode(ele){
             document.getElementById("episode-info").style.display = "none";
             const anime = ele.getAttribute("data-anime");
@@ -1846,7 +1908,96 @@
             }
         }
 
+        function showAnimeGenre(ele){
+            const id = ele.getAttribute("data-id");
+            idAnime = id;
+            fetch(`http://localhost:3456/api/v1/anime/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                if(result.message == "Failed"){
+                    alert(result.error);
+                }else{
+                    setDataAnimeGenre(result.data);
+                }
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        }
 
+        function addAnimeGenre(ele){
+            const genre = ele.getAttribute("data-id");
+            const anime = idAnime;
+            fetch('http://localhost:3456/api/v1/anime/add-genre', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({anime, genre})
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.message == "Failed"){
+                    alert(result.error);
+                }else{
+                    alert(result.message);
+                    setDataAnimeGenre(result.data);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteAnimeGenre(ele){
+            const idGA = ele.getAttribute("data-id");
+            const idAnime = ele.getAttribute("data-anime");
+            console.log(idGA, idAnime);
+            fetch('http://localhost:3456/api/v1/anime/delete-genre', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({idGA, idAnime})
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+                setDataAnimeGenre(result.data);
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function setDataAnimeGenre(data){
+            const genres = data.Genre;
+            const genreOfAnime = document.getElementById("list-genre-anime");
+            document.getElementById("an").innerText = data.Name;
+            genreOfAnime.innerHTML = '';
+            genres.forEach(ele => {
+                genreOfAnime.insertAdjacentHTML('beforeend', `
+                    <a class="bg-success p-1" href="javascript:void(0)" style="margin:0 5px 5px 0; color: #fff;">
+                        <span style="margin-right: 7px;">${ele.Genre}</span>
+                        <button type="button" class="btn-close" aria-label="Close" 
+                        data-anime="${data.idAnime}" data-id="${ele.idGA}" onclick="deleteAnimeGenre(this)"></button>
+                    </a> 
+                `);
+            });
+        }
+    
+        function checkAnimeSeason(ele){
+            const id = ele.getAttribute("data-id");
+            fetch(`http://localhost:3456/api/v1/season/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                if(result.message == "Failed"){
+                    alert(result.error);
+                }
+            })
+            .catch(err => {console.log(err)});
+        }
     </script>
 
 </body>
