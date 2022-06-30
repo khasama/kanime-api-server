@@ -1,5 +1,5 @@
 require('dotenv').config();
-const s3 = require('../config/aws.config');
+const s3 = require('../configs/aws.config');
 const fs = require('fs');
 const bucket = process.env.AWS_BUCKET_NAME;
 

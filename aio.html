@@ -21,6 +21,11 @@
             text-decoration: none;
             color: #000;
         }
+
+        .active {
+            background-color: #666 !important;
+            color: white !important;
+        }
     </style>
 </head>
 
@@ -658,7 +663,7 @@
                                                                     <select id="add-serverlink-select" class="d-inline w-75 form-control"></select>
                                                                 </div>
                                                                 <label for="link" class="form-label">Link: </label>
-                                                                <input type="text" id="add-link-input" class="form-control">
+                                                                <input type="text" id="add-link-input" class="form-control" autocomplete="off">
                                                                 <button class="mt-2 btn btn-success" onclick="addLink()">Add</button>
                                                             </div>
                                                         </div>
@@ -728,6 +733,31 @@
                                                 </table>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="addSeason" tabindex="-1" 
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add Season</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <label for="season" class="form-label">Season: </label>
+                                            <input type="text" id="add-seasonanime-input" class="form-control">
+                                            <label for="genre" class="form-label">Series: </label>
+                                            <select id="add-series-select" class="form-select"></select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="addAnimeSeason()" id="add-s-a">Add</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteAnimeSeason(this)" id="delete-s-a">Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -1115,7 +1145,9 @@
             .then(data => {
                 const series = data.data;
                 const seriesTb = document.getElementById("series-tb-list");
+                const seriesSl = document.getElementById("add-series-select");
                 seriesTb.innerHTML = '';
+                seriesSl.innerHTML = '';
                 series.forEach(ele => {
                     seriesTb.insertAdjacentHTML('beforeend', `
                         <tr>
@@ -1134,6 +1166,7 @@
                         </tr>
                         `
                     );
+                    seriesSl.insertAdjacentHTML('beforeend', `<option value="${ele.idSeries}">${ele.Series}</option>`);
                 });
             });
         }
@@ -1503,7 +1536,7 @@
                                     <img src="https://img.icons8.com/ios-glyphs/30/000000/movie--v1.png"/>
                                 </a>
                                 <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idAnime}" 
-                                onclick="deleteAnimeSoft(this)" title="delete">
+                                onclick="deleteSoftAnime(this)" title="delete">
                                     <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
                                 </a>
                             </td>
@@ -1716,6 +1749,7 @@
                         </a>
                     `);
                 });
+                activeBtn();
             })
             .catch(err => {console.log(err)});
         }
@@ -1989,14 +2023,104 @@
     
         function checkAnimeSeason(ele){
             const id = ele.getAttribute("data-id");
+            idAnime = id;
             fetch(`http://localhost:3456/api/v1/season/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                const addSeasonAnime = document.getElementById("add-seasonanime-input");
+                const seriesSelectOption = document.getElementById("add-series-select").childNodes;
+                if(result.message == "Success"){
+                    const season = result.data[0];
+                    addSeasonAnime.value = season.Season;
+                    seriesSelectOption.forEach(ele => {
+                        ele.removeAttribute("selected");
+                        if(ele.getAttribute("value") == season.idSeries){
+                            ele.setAttribute("selected", true);
+                        }
+                    });
+                    document.getElementById("add-s-a").style.display = 'none';
+                    document.getElementById("delete-s-a").style.display = 'block';
+                    document.getElementById("delete-s-a").setAttribute("data-id", season.idSeason);
+                    
+                }else{
+                    addSeasonAnime.value = '';
+                    seriesSelectOption.forEach(ele => {
+                        ele.removeAttribute("selected");
+                    });
+                    document.getElementById("delete-s-a").style.display = 'none';
+                    document.getElementById("add-s-a").style.display = 'block';
+                }
+
+                $('#addSeason').modal('show');
+            })
+            .catch(err => {console.log(err)});
+        }
+
+        function addAnimeSeason(){
+            const idSeries = document.getElementById("add-series-select").value;
+            const season = document.getElementById("add-seasonanime-input").value;
+            if(season && idSeries){
+                fetch(`http://localhost:3456/api/v1/season/add/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        idAnime, 
+                        idSeries, 
+                        season
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.message == "Failed"){
+                        alert(result.error);
+                    }else{
+                        alert(result.message);
+                        $('#addSeason').modal('hide');
+                    }
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+            }else{
+                alert("Not emty");
+            }
+        }
+
+        function deleteAnimeSeason(ele){
+            const id = ele.getAttribute("data-id");
+            fetch(`http://localhost:3456/api/v1/season/delete/${id}`,{ method: 'DELETE'})
             .then(response => response.json())
             .then(result => {
                 if(result.message == "Failed"){
                     alert(result.error);
+                }else{
+                    alert(result.message);
+                    $('#addSeason').modal('hide');
                 }
             })
-            .catch(err => {console.log(err)});
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        }
+
+    </script>
+
+    <script>
+        //list-eps
+        function activeBtn(){
+            var header = document.getElementById("list-eps");
+            var btns = header.getElementsByClassName("btn");
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].addEventListener("click", function() {
+                    var current = document.getElementsByClassName("active");
+                    if (current.length > 0) { 
+                        current[0].className = current[0].className.replace(" active", "");
+                    }
+                    this.className += " active";
+                });
+            }
         }
     </script>
 

@@ -30,7 +30,7 @@ SeasonController.addSeason = async (req, res, next) => {
 
 SeasonController.deleteSeason = async (req, res, next) => {
     try {
-        const id = req.params.id
+        const id = req.params.id;
         const rs = await SeasonService.deleteSeason(id);
         return res.status(200).json(rs);
     } catch (error) {
