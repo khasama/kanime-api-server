@@ -322,7 +322,7 @@
                                     <div class="modal-body">
                                         <div>
                                             <label for="year" class="form-label">Year: </label>
-                                            <input type="text" id="create-year-input" class="form-control">
+                                            <input type="text" id="create-year-input" class="form-control" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -891,44 +891,46 @@
             fetch('http://localhost:3456/api/v1/genre/all')
             .then(response => response.json())
             .then(data => {
-                const genres = data.data;
-                const genreTb = document.getElementById("genre-tb-list");
-                const genreTbb = document.getElementById("genre-tb-list-b");
-                genreTb.innerHTML = '';
-                genreTbb.innerHTML = '';
-                genres.forEach(ele => {
-                    genreTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td scope="row">${ele.idGenre}</td>    
-                            <td>${ele.Genre}</td>
-                            <td>${ele.GenreSlug}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
-                                onclick="setDataGenre(this)" data-bs-toggle='modal' data-bs-target='#updateGenreModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idGenre}" 
-                                onclick="deleteGenre(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                    genreTbb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td scope="row">${ele.idGenre}</td>    
-                            <td>${ele.Genre}</td>
-                            <td>
-                                <a href="javascript:void(0)" class="btn btn-secondary" data-id="${ele.idGenre}" 
-                                onclick="addAnimeGenre(this)">
-                                    <img src="https://img.icons8.com/external-simple-solid-edt.graphics/30/000000/external-Plus-add-and-remove-simple-solid-edt.graphics.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                });
+                if(data.status == "Success"){
+                    const genres = data.data;
+                    const genreTb = document.getElementById("genre-tb-list");
+                    const genreTbb = document.getElementById("genre-tb-list-b");
+                    genreTb.innerHTML = '';
+                    genreTbb.innerHTML = '';
+                    genres.forEach(ele => {
+                        genreTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td scope="row">${ele.idGenre}</td>    
+                                <td>${ele.Genre}</td>
+                                <td>${ele.GenreSlug}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                    onclick="setDataGenre(this)" data-bs-toggle='modal' data-bs-target='#updateGenreModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idGenre}" 
+                                    onclick="deleteGenre(this)">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                        genreTbb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td scope="row">${ele.idGenre}</td>    
+                                <td>${ele.Genre}</td>
+                                <td>
+                                    <a href="javascript:void(0)" class="btn btn-secondary" data-id="${ele.idGenre}" 
+                                    onclick="addAnimeGenre(this)">
+                                        <img src="https://img.icons8.com/external-simple-solid-edt.graphics/30/000000/external-Plus-add-and-remove-simple-solid-edt.graphics.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                    });
+                }
             });
         }
         
@@ -952,15 +954,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Success"){
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         getGenre();
                     }else{
-                        alert(result.error);
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             } else {
                 alert("Not emty");
@@ -979,15 +981,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getGenre();
                     }else{
                         alert(result.message);
-                        getGenre();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             } else {
                 alert("Not emty");
@@ -1002,15 +1004,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getGenre()
                     }else{
                         alert(result.message);
-                        getGenre();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }
         }
@@ -1023,32 +1025,34 @@
             fetch('http://localhost:3456/api/v1/status/all')
             .then(response => response.json())
             .then(data => {
-                const status = data.data;
-                const statusTb = document.getElementById("status-tb-list");
-                const statusSl = document.getElementById("update-status-select");
-                statusTb.innerHTML = '';
-                statusSl.innerHTML = '';
-                status.forEach(ele => {
-                    statusTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td scope="row">${ele.idStatus}</td>    
-                            <td>${ele.Status}</td>
-                            <td>${ele.StatusSlug}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
-                                onclick="setDataStatus(this)" data-bs-toggle='modal' data-bs-target='#updateStatusModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idStatus}" 
-                                onclick="deleteStatus(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                    statusSl.insertAdjacentHTML('beforeend', `<option value="${ele.idStatus}">${ele.Status}</option>`);
-                });
+                if(data.status == "Success"){
+                    const status = data.data;
+                    const statusTb = document.getElementById("status-tb-list");
+                    const statusSl = document.getElementById("update-status-select");
+                    statusTb.innerHTML = '';
+                    statusSl.innerHTML = '';
+                    status.forEach(ele => {
+                        statusTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td scope="row">${ele.idStatus}</td>    
+                                <td>${ele.Status}</td>
+                                <td>${ele.StatusSlug}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                    onclick="setDataStatus(this)" data-bs-toggle='modal' data-bs-target='#updateStatusModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idStatus}" 
+                                    onclick="deleteStatus(this)">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                        statusSl.insertAdjacentHTML('beforeend', `<option value="${ele.idStatus}">${ele.Status}</option>`);
+                    });
+                }
             });
         }
         
@@ -1072,15 +1076,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Success"){
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         getStatus();
                     }else{
-                        alert(result.error);
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             } else {
                 alert("Not emty");
@@ -1099,11 +1103,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getStatus();
                     }else{
                         alert(result.message);
-                        getStatus();
                     }
                 })
                 .catch(error => {
@@ -1122,11 +1126,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getStatus();
                     }else{
                         alert(result.message);
-                        getStatus();
                     }
                 })
                 .catch(error => {
@@ -1143,31 +1147,33 @@
             fetch('http://localhost:3456/api/v1/series/all')
             .then(response => response.json())
             .then(data => {
-                const series = data.data;
-                const seriesTb = document.getElementById("series-tb-list");
-                const seriesSl = document.getElementById("add-series-select");
-                seriesTb.innerHTML = '';
-                seriesSl.innerHTML = '';
-                series.forEach(ele => {
-                    seriesTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${ele.idSeries}</td>    
-                            <td>${ele.Series}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
-                                onclick="setDataSeries(this)" data-bs-toggle='modal' data-bs-target='#updateSeriesModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idSeries}" 
-                                onclick="deleteSeries(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                    seriesSl.insertAdjacentHTML('beforeend', `<option value="${ele.idSeries}">${ele.Series}</option>`);
-                });
+                if(data.status == "Success"){
+                    const series = data.data;
+                    const seriesTb = document.getElementById("series-tb-list");
+                    const seriesSl = document.getElementById("add-series-select");
+                    seriesTb.innerHTML = '';
+                    seriesSl.innerHTML = '';
+                    series.forEach(ele => {
+                        seriesTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td>${ele.idSeries}</td>    
+                                <td>${ele.Series}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                    onclick="setDataSeries(this)" data-bs-toggle='modal' data-bs-target='#updateSeriesModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idSeries}" 
+                                    onclick="deleteSeries(this)">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                        seriesSl.insertAdjacentHTML('beforeend', `<option value="${ele.idSeries}">${ele.Series}</option>`);
+                    });
+                }
             });
         }
         
@@ -1191,11 +1197,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Success"){
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         getSeries();
                     }else{
-                        alert(result.error);
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
@@ -1218,15 +1224,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getSeries();
                     }else{
                         alert(result.message);
-                        getSeries();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }else{
                 alert("Not emty");
@@ -1241,15 +1247,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getSeries();
                     }else{
                         alert(result.message);
-                        getSeries();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }
         }
@@ -1262,34 +1268,38 @@
             fetch('http://localhost:3456/api/v1/year/all')
             .then(response => response.json())
             .then(data => {
-                const year = data.data;
-                const yearTb = document.getElementById("year-tb-list");
-                const yearCSl = document.getElementById("create-year-select");
-                const yearUSl = document.getElementById("update-year-select");
-                yearTb.innerHTML = '';
-                yearCSl.innerHTML = '';
-                yearUSl.innerHTML = '';
-                year.forEach(ele => {
-                    yearTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${ele.idYear}</td>    
-                            <td>${ele.Year}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
-                                onclick="setDataYear(this)" data-bs-toggle='modal' data-bs-target='#updateYearModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idYear}" 
-                                onclick="deleteYear(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                    yearCSl.insertAdjacentHTML('beforeend', `<option value="${ele.idYear}">${ele.Year}</option>`);
-                    yearUSl.insertAdjacentHTML('beforeend', `<option value="${ele.idYear}">${ele.Year}</option>`);
-                });
+                if(data.status == "Success"){
+                    const year = data.data;
+                    const yearTb = document.getElementById("year-tb-list");
+                    const yearCSl = document.getElementById("create-year-select");
+                    const yearUSl = document.getElementById("update-year-select");
+                    yearTb.innerHTML = '';
+                    yearCSl.innerHTML = '';
+                    yearUSl.innerHTML = '';
+                    year.forEach(ele => {
+                        yearTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td>${ele.idYear}</td>    
+                                <td>${ele.Year}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                    onclick="setDataYear(this)" data-bs-toggle='modal' data-bs-target='#updateYearModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idYear}" 
+                                    onclick="deleteYear(this)">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                        yearCSl.insertAdjacentHTML('beforeend', `<option value="${ele.idYear}">${ele.Year}</option>`);
+                        yearUSl.insertAdjacentHTML('beforeend', `<option value="${ele.idYear}">${ele.Year}</option>`);
+                    });
+                }else{
+                    alert(data.message);
+                }
             });
         }
         
@@ -1313,11 +1323,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Success"){
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         getYear();
                     }else{
-                        alert(result.error);
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
@@ -1340,11 +1350,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getYear();
                     }else{
                         alert(result.message);
-                        getYear();
                     }
                 })
                 .catch(error => {
@@ -1363,11 +1373,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
-                    }else{
+                    if(result.status == "Success"){
                         alert(result.message);
                         getYear();
+                    }else{
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
@@ -1384,33 +1394,35 @@
             fetch('http://localhost:3456/api/v1/server/all')
             .then(response => response.json())
             .then(data => {
-                const servers = data.data;
-                const serverTb = document.getElementById("server-tb-list");
-                const serverSl = document.getElementById("update-mainserver-select");
-                serverTb.innerHTML = '';
-                serverSl.innerHTML = '';
-                servers.forEach(ele => {
-                    serverTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${ele.idServer}</td>    
-                            <td>${ele.Server}</td>
-                            <td>${ele.ServerDescription}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
-                                onclick="setDataServer(this)" data-bs-toggle='modal' data-bs-target='#updateServerModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idServer}" 
-                                onclick="deleteServer(this)">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
+                if(data.status == "Success"){
+                    const servers = data.data;
+                    const serverTb = document.getElementById("server-tb-list");
+                    const serverSl = document.getElementById("update-mainserver-select");
+                    serverTb.innerHTML = '';
+                    serverSl.innerHTML = '';
+                    servers.forEach(ele => {
+                        serverTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td>${ele.idServer}</td>    
+                                <td>${ele.Server}</td>
+                                <td>${ele.ServerDescription}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-infor='${JSON.stringify(ele)}'
+                                    onclick="setDataServer(this)" data-bs-toggle='modal' data-bs-target='#updateServerModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idServer}" 
+                                    onclick="deleteServer(this)">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
 
-                    serverSl.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
-                });
+                        serverSl.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                    });
+                }
             });
         }
         
@@ -1436,11 +1448,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Success"){
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         getServer();
                     }else{
-                        alert(result.error);
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
@@ -1464,15 +1476,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getServer();
                     }else{
                         alert(result.message);
-                        getServer();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }else{
                 alert("Not emty");
@@ -1487,15 +1499,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getServer();
                     }else{
                         alert(result.message);
-                        getServer();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }
         }
@@ -1508,42 +1520,44 @@
             fetch('http://localhost:3456/api/v1/anime/all')
             .then(response => response.json())
             .then(data => {
-                const anime = data.data;
-                const animeTb = document.getElementById("anime-tb-list");
-                animeTb.innerHTML = '';
-                anime.forEach(ele => {
-                    animeTb.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${ele.idAnime}</td>    
-                            <td>${ele.Name}</td>
-                            <td>${ele.Status}</td>
-                            <td>${ele.Activate}</td>
-                            <td>
-                                <a href='javascript:void(0)' class='btn btn-info' data-id='${ele.idAnime}' title="update"
-                                onclick="setDataAnime(this)" data-bs-toggle='modal' data-bs-target='#updateAnimeModal'>
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-primary" data-server="${ele.MainServer}" data-anime="${ele.idAnime}" 
-                                data-name="${ele.Name}" onclick="getFullEpisode(this)" data-bs-target='#episodeModal' data-bs-toggle='modal' title="episode">
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/list--v1.png"/>
-                                </a>
-                                <a href='javascript:void(0)' class='btn btn-warning' data-id='${ele.idAnime}' title="genre"
-                                onclick="showAnimeGenre(this)" data-bs-toggle='modal' data-bs-target='#animeGenreModal'>
-                                    <img src="https://img.icons8.com/ios-filled/30/000000/category.png"/>
-                                </a>
-                                <a href='javascript:void(0)' class='btn btn-success' data-id='${ele.idAnime}' title="season"
-                                onclick="checkAnimeSeason(this)">
-                                    <img src="https://img.icons8.com/ios-glyphs/30/000000/movie--v1.png"/>
-                                </a>
-                                <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idAnime}" 
-                                onclick="deleteSoftAnime(this)" title="delete">
-                                    <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
-                                </a>
-                            </td>
-                        </tr>
-                        `
-                    );
-                });
+                if(data.status == "Success"){
+                    const anime = data.data;
+                    const animeTb = document.getElementById("anime-tb-list");
+                    animeTb.innerHTML = '';
+                    anime.forEach(ele => {
+                        animeTb.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td>${ele.idAnime}</td>    
+                                <td>${ele.Name}</td>
+                                <td>${ele.Status}</td>
+                                <td>${ele.Activate}</td>
+                                <td>
+                                    <a href='javascript:void(0)' class='btn btn-info' data-id='${ele.idAnime}' title="update"
+                                    onclick="setDataAnime(this)" data-bs-toggle='modal' data-bs-target='#updateAnimeModal'>
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-primary" data-server="${ele.MainServer}" data-anime="${ele.idAnime}" 
+                                    data-name="${ele.Name}" onclick="getFullEpisode(this)" data-bs-target='#episodeModal' data-bs-toggle='modal' title="episode">
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/list--v1.png"/>
+                                    </a>
+                                    <a href='javascript:void(0)' class='btn btn-warning' data-id='${ele.idAnime}' title="genre"
+                                    onclick="showAnimeGenre(this)" data-bs-toggle='modal' data-bs-target='#animeGenreModal'>
+                                        <img src="https://img.icons8.com/ios-filled/30/000000/category.png"/>
+                                    </a>
+                                    <a href='javascript:void(0)' class='btn btn-success' data-id='${ele.idAnime}' title="season"
+                                    onclick="checkAnimeSeason(this)">
+                                        <img src="https://img.icons8.com/ios-glyphs/30/000000/movie--v1.png"/>
+                                    </a>
+                                    <a href="javascript:void(0)" class="btn btn-danger" data-id="${ele.idAnime}" 
+                                    onclick="deleteSoftAnime(this)" title="delete">
+                                        <img src="https://img.icons8.com/material-rounded/24/000000/filled-trash.png"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            `
+                        );
+                    });
+                }
             });
         }
         
@@ -1552,9 +1566,7 @@
             fetch(`http://localhost:3456/api/v1/anime/${id}`)
             .then(response => response.json())
             .then(result => {
-                if(result.message == "Failed"){
-                    alert(result.error);
-                }else{
+                if(result.status == "Success"){
                     const anime = result.data;
                     document.getElementById("anime").innerText = anime.Name;
                     document.getElementById("update-name-input").value = anime.Name;
@@ -1595,6 +1607,8 @@
                     document.getElementById("old-image").value = anime.Image;
                     document.getElementById("old-imagebg").value = anime.ImageBG;
                     document.getElementById("update-idAnime-input").value = anime.idAnime;
+                }else{
+                    alert(result.message);
                 }
             })
             .catch(error => {
@@ -1647,11 +1661,13 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    // const anime = result.data;
-                    // console.log(anime);
-                    alert(result.message);
-                    getAnime();
-                    $('#updateAnimeModal').modal('hide');
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getAnime();
+                        $('#updateAnimeModal').modal('hide');
+                    }else{
+                        alert(result.message);
+                    }
                 })
                 .catch(error => {
                     console.log('Error:', error);
@@ -1681,11 +1697,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getAnime();
                     }else{
                         alert(result.message);
-                        getAnime();
                     }
                 })
                 .catch(error => {
@@ -1704,11 +1720,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        getAnime();
                     }else{
                         alert(result.message);
-                        getAnime();
                     }
                 })
                 .catch(error => {
@@ -1739,17 +1755,21 @@
             fetch(`http://localhost:3456/api/v1/episode/get-ep/${anime}-${server}`)
             .then(response => response.json())
             .then(result => {
-                const eps = result.data;
-                const listEp = document.getElementById("list-eps");
-                listEp.innerHTML = '';
-                eps.forEach(ele => {
-                    listEp.insertAdjacentHTML('beforeend', `
-                        <a href='javascript:void(0)' class='mb-1 btn btn-primary' data-info='${JSON.stringify(ele)}' onclick='getFullUrl(this)'>
-                            ${ele.Episode}
-                        </a>
-                    `);
-                });
-                activeBtn();
+                if(result.status == "Success"){
+                    const eps = result.data;
+                    const listEp = document.getElementById("list-eps");
+                    listEp.innerHTML = '';
+                    eps.forEach(ele => {
+                        listEp.insertAdjacentHTML('beforeend', `
+                            <a href='javascript:void(0)' class='mb-1 btn btn-primary' data-info='${JSON.stringify(ele)}' onclick='getFullUrl(this)'>
+                                ${ele.Episode}
+                            </a>
+                        `);
+                    });
+                    activeBtn();
+                }else{
+                    alert(result.message);
+                }
             })
             .catch(err => {console.log(err)});
         }
@@ -1761,13 +1781,17 @@
             setDataEpisode(mainLink);
             fetch('http://localhost:3456/api/v1/server/all')
             .then(response => response.json())
-            .then(data => {
-                const servers = data.data;
-                const serverSl = document.getElementById("add-serverlink-select");
-                serverSl.innerHTML = '';
-                servers.forEach(ele => {
-                    serverSl.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
-                });
+            .then(result => {
+                if(result.status == "Success"){
+                    const servers = result.data;
+                    const serverSl = document.getElementById("add-serverlink-select");
+                    serverSl.innerHTML = '';
+                    servers.forEach(ele => {
+                        serverSl.insertAdjacentHTML('beforeend', `<option value="${ele.idServer}">${ele.Server}</option>`);
+                    });
+                }else{
+                    alert(result.message);
+                }
             });
         }
 
@@ -1776,8 +1800,12 @@
             fetch(`http://localhost:3456/api/v1/episode/get-link/${id}`)
             .then(response => response.json())
             .then(result => {
-                const info = result.data[0];
-                setDataEpisode(info);
+                if(result.status == "Success"){
+                    const info = result.data[0];
+                    setDataEpisode(info);
+                }else{
+                    alert(result.message);
+                }
             })
             .catch(err => {console.log(err)});
         }
@@ -1792,15 +1820,18 @@
             fetch(`http://localhost:3456/api/v1/episode/get-furl/${data.idAnime}-${data.Episode}`)
             .then(response => response.json())
             .then(result => {
-                const links = result.data;
-                const listLink = document.getElementById("list-sever-ep");
-                listLink.innerHTML = '';
-                links.forEach(ele => {
-                    listLink.insertAdjacentHTML('beforeend', `
-                        <a href="javascript:void(0)" class="mr-1 btn btn-primary" data-id="${ele.idEpisode}" onclick="getLink(this)">${ele.Server}</a>
-                    `);
-                });
-                
+                if(result.status == "Success"){
+                    const links = result.data;
+                    const listLink = document.getElementById("list-sever-ep");
+                    listLink.innerHTML = '';
+                    links.forEach(ele => {
+                        listLink.insertAdjacentHTML('beforeend', `
+                            <a href="javascript:void(0)" class="mr-1 btn btn-primary" data-id="${ele.idEpisode}" onclick="getLink(this)">${ele.Server}</a>
+                        `);
+                    });
+                }else{
+                    alert(result.message);
+                }
             })
             .catch(err => {console.log(err)});
         }
@@ -1818,16 +1849,16 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
-                    }else{
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         document.getElementById("update-link-input").value = link;
                         document.getElementById("player").setAttribute("src", link);
+                    }else{
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }else{
                 alert("Not emty !!!");
@@ -1842,20 +1873,19 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
-                    }else{
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         if(mainLink.idEpisode == id){
                             document.getElementById("episode-info").style.display = "none";
                             setListEp(Ep.idAnime, Ep.idServer);
                         }
                         setDataEpisode(mainLink);
-                        
+                    }else{
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
                 
             }
@@ -1875,10 +1905,8 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
-                    }else{
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         link.value = '';
                         fetch(`http://localhost:3456/api/v1/episode/get-furl/${Ep.idAnime}-${episode}`)
                         .then(response => response.json())
@@ -1891,13 +1919,15 @@
                                     <a href="javascript:void(0)" class="mr-1 btn btn-primary" data-id="${ele.idEpisode}" onclick="getLink(this)">${ele.Server}</a>
                                 `);
                             });
-                            
                         })
                         .catch(err => {console.log(err)});
+                    }else{
+                        alert(result.message);
+                        
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    console.log('Error:', error);
                 });
             }else{
                 alert("Not emty");
@@ -1922,16 +1952,15 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
-                    }else{
-                        alert(result.message);
+                    if(result.status == "Success"){
+                        alert(result.status);
                         episode.value = '';
                         link.value = '';
                         setListEp(Ep.idAnime, Ep.idServer);
                         $('#addEpisodeModal').modal('hide');
                         $('#episodeModal').modal('show');
-                        
+                    }else{
+                        alert(result.message);
                     }
                 })
                 .catch(error => {
@@ -1948,10 +1977,10 @@
             fetch(`http://localhost:3456/api/v1/anime/${id}`)
             .then(response => response.json())
             .then(result => {
-                if(result.message == "Failed"){
-                    alert(result.error);
-                }else{
+                if(result.status == "Success"){
                     setDataAnimeGenre(result.data);
+                }else{
+                    alert(result.message);
                 }
             })
             .catch(error => {
@@ -1971,15 +2000,15 @@
             })
             .then(response => response.json())
             .then(result => {
-                if(result.message == "Failed"){
-                    alert(result.error);
+                if(result.status == "Success"){
+                    alert(result.status);
+                    setDataAnimeGenre(result.data);
                 }else{
                     alert(result.message);
-                    setDataAnimeGenre(result.data);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.log('Error:', error);
             });
         }
 
@@ -1996,12 +2025,16 @@
             })
             .then(response => response.json())
             .then(result => {
-                alert(result.message);
-                setDataAnimeGenre(result.data);
+                if(result.status == "Success"){
+                    alert(result.status);
+                    setDataAnimeGenre(result.data);
+                }else{
+                    alert(result.message);
+                }
                 
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.log('Error:', error);
             });
         }
 
@@ -2029,7 +2062,7 @@
             .then(result => {
                 const addSeasonAnime = document.getElementById("add-seasonanime-input");
                 const seriesSelectOption = document.getElementById("add-series-select").childNodes;
-                if(result.message == "Success"){
+                if(result.status == "Success"){
                     const season = result.data[0];
                     addSeasonAnime.value = season.Season;
                     seriesSelectOption.forEach(ele => {
@@ -2073,11 +2106,11 @@
                 })
                 .then(response => response.json())
                 .then(result => {
-                    if(result.message == "Failed"){
-                        alert(result.error);
+                    if(result.status == "Success"){
+                        alert(result.status);
+                        $('#addSeason').modal('hide');
                     }else{
                         alert(result.message);
-                        $('#addSeason').modal('hide');
                     }
                 })
                 .catch(error => {
@@ -2093,11 +2126,11 @@
             fetch(`http://localhost:3456/api/v1/season/delete/${id}`,{ method: 'DELETE'})
             .then(response => response.json())
             .then(result => {
-                if(result.message == "Failed"){
-                    alert(result.error);
+                if(result.status == "Success"){
+                    alert(result.status);
+                    $('#addSeason').modal('hide');
                 }else{
                     alert(result.message);
-                    $('#addSeason').modal('hide');
                 }
             })
             .catch(error => {

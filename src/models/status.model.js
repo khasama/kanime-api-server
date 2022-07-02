@@ -8,7 +8,11 @@ function Status(status){
 }
 
 Status.getAll = async () => {
-    return await promisePool.execute(`SELECT * FROM tb_status`);
+    return await promisePool.execute(`SELECT * FROM tb_status ORDER BY idStatus ASC`);
+}
+
+Status.getOne = async (id) => {
+    return await promisePool.execute(`SELECT * FROM tb_status WHERE idStatus = ?`, [id]);
 }
 
 Status.createOne = async (status) => {

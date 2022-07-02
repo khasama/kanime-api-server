@@ -8,7 +8,7 @@ function Genre(genre){
 }
 
 Genre.getAll = async () => {
-    return await promisePool.execute("SELECT * FROM tb_genre");
+    return await promisePool.execute("SELECT * FROM tb_genre ORDER BY idGenre ASC");
 }
 
 Genre.getInformation = async (id) => {

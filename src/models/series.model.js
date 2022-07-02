@@ -6,7 +6,7 @@ function Series(series){
 }
 
 Series.getAll = async () => {
-    return await promisePool.execute("SELECT * FROM tb_series");
+    return await promisePool.execute("SELECT * FROM tb_series ORDER BY idSeries ASC");
 }
 
 Series.createOne = async (series) => {

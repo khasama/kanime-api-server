@@ -2,69 +2,77 @@ const GenreService = require('../services/genre.service');
 
 const GenreController = {}
 
-GenreController.getAll = async (req, res, next) => {
-    try {
-        const rs = await GenreService.getAll();
+GenreController.getAll = (req, res, next) => {
+    GenreService.getAll()
+    .then(rs => {
         return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    });
 }
 
-GenreController.createOne = async (req, res, next) => {
-    try {
-        const data = {genre: req.body.genre};
-        const rs = await GenreService.createOne(data);
+GenreController.createOne = (req, res, next) => {
+    const data = {genre: req.body.genre};
+    GenreService.createOne(data)
+    .then(rs => {
         return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    });
 }
 
-GenreController.deleteOne = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const rs = await GenreService.deleteOne(id);
+GenreController.deleteOne = (req, res, next) => {
+    const id = req.params.id;
+    GenreService.deleteOne(id)
+    .then(rs => {
         return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    });
 }
 
-GenreController.getAAOG = async (req, res, next) => {
-    const id = req.params.id
-    try {
-        const rs = await GenreService.getAAOG(id);
+GenreController.getAAOG = (req, res, next) => {
+    const id = req.params.id;
+    GenreService.getAAOG(id)
+    .then(rs => {
         return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    });
 }
 
-GenreController.getInformation = async (req, res, next) => {
-    const id = req.params.id
-    try {
-        const rs = await GenreService.getInformation(id);
+GenreController.getInformation = (req, res, next) => {
+    const id = req.params.id;
+    GenreService.getInformation(id)
+    .then(rs => {
         return res.status(200).json(rs);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
-    }
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    });
 }
 
-GenreController.updateOne = async (req, res, next) => {
+GenreController.updateOne = (req, res, next) => {
     const data = {
         id: req.params.id,
         genre: req.body.genre
     }
-    GenreService.updateOne(data).then(rs => {
+    GenreService.updateOne(data)
+    .then(rs => {
         return res.status(200).json(rs);
-    }).catch(err => {
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 

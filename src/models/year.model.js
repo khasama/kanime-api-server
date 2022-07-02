@@ -6,7 +6,7 @@ function Year(year){
 }
 
 Year.getAll = async () => {
-    return await promisePool.execute(`SELECT * FROM tb_year`);
+    return await promisePool.execute(`SELECT * FROM tb_year ORDER BY idYear ASC`);
 }
 
 Year.createOne = async (status) => {

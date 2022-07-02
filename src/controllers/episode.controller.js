@@ -13,7 +13,7 @@ EpisodeController.getEp =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 
@@ -28,7 +28,7 @@ EpisodeController.updateOne =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 
@@ -43,7 +43,7 @@ EpisodeController.getFullUrl =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 
@@ -60,7 +60,7 @@ EpisodeController.addEP =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 
@@ -72,7 +72,7 @@ EpisodeController.deleteEp =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 
@@ -84,7 +84,7 @@ EpisodeController.getLink =  (req, res, next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     });
 }
 

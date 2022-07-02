@@ -4,28 +4,51 @@ const AnimeModel = require('../models/anime.model');
 const StatusService = {}
 
 StatusService.getAll = async () => {
-    const [rows] = await StatusModel.getAll();
-    return {message: "Success", data: rows}
+    try {
+        const [rows] = await StatusModel.getAll();
+        return {status: "Success", data: rows}
+    } catch (error) {
+        throw error;
+    }
 }
 
 StatusService.createOne = async (data) => {
-    const [rows] = await StatusModel.createOne(new StatusModel(data));
-    if(rows.insertId > 0) return {message: "Success"};
-    return {message: "Failed", error: "Can not create"};
+    try {
+        const [rows] = await StatusModel.createOne(new StatusModel(data));
+        if(rows.insertId > 0){
+            const [status] = await StatusModel.getOne(rows.insertId);
+            return {status: "Success", data: status};
+        }
+        return {status: "Failed", message: "Can not create"};
+    } catch (error) {
+        throw error;
+    }
 }
 
 StatusService.updateOne = async (data) => {
-    const [rows] = await StatusModel.updateOne(data);
-    return {message: "Success", data: rows}
+    try {
+        const [rows] = await StatusModel.updateOne(data);
+        if(rows.affectedRows != 0){
+            const [status] = await StatusModel.getOne(data.id);
+            return {status: "Success", data: status};
+        }
+        return {status: "Failed", message: "Can not create"};
+    } catch (error) {
+        throw error;
+    }
 }
 
 StatusService.deleteOne = async (id) => {
-    const [check] = await AnimeModel.getASS(id, false);
-    if(check.length == 0){
-        const [rows] = await StatusModel.deleteOne(id);
-        if(rows.affectedRows != 0 ) return {message: "Success"};
+    try {
+        const [check] = await AnimeModel.getASS(id, false);
+        if(check.length == 0){
+            const [rows] = await StatusModel.deleteOne(id);
+            if(rows.affectedRows != 0 ) return {status: "Success"};
+        }
+        return {status: "Failed", message: "Can not delete"};
+    } catch (error) {
+        throw error;
     }
-    return {message: "Failed", error: "Can not delete"};
 }
 
 module.exports = StatusService;

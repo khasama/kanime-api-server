@@ -7,7 +7,7 @@ function Server(server){
 }
 
 Server.getAll = async () => {
-    return await promisePool.execute("SELECT * FROM tb_server");
+    return await promisePool.execute("SELECT * FROM tb_server ORDER BY idServer ASC");
 }
 
 Server.createOne = async (server) => {

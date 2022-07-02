@@ -9,7 +9,7 @@ SeasonController.getAnimeSeason = async (req, res, next) => {
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     }
 }
 
@@ -24,7 +24,7 @@ SeasonController.addSeason = async (req, res, next) => {
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     }
 }
 
@@ -35,7 +35,7 @@ SeasonController.deleteSeason = async (req, res, next) => {
         return res.status(200).json(rs);
     } catch (error) {
         console.log(error);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     }
 }
 

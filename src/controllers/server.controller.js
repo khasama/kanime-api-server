@@ -9,7 +9,7 @@ ServerController.getAll = (req, res , next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     })
 }
 
@@ -24,7 +24,7 @@ ServerController.createOne = (req, res , next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     })
 }
 
@@ -40,7 +40,7 @@ ServerController.updateOne = (req, res , next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     })
 }
 
@@ -52,7 +52,7 @@ ServerController.deleteOne = (req, res , next) => {
     })
     .catch(err => {
         console.log(err);
-        return res.status(500).json({message: "Failed", error: "Has a fucking error"});
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
     })
 }
 

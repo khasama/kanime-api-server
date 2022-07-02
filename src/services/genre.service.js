@@ -3,48 +3,74 @@ const GenreModel = require('../models/genre.model');
 const GenreService = {}
 
 GenreService.getAll = async () => {
-    const [rows] = await GenreModel.getAll();
-    return {message: "Success", data:rows};
+    try {
+        const [rows] = await GenreModel.getAll();
+        return {status: "Success", data:rows};
+    } catch (error) {
+        throw error;
+    }
 }
 
 GenreService.getInformation = async (id) => {
-    const [rows] = await GenreModel.getInformation(id);
-    if(rows.length > 0) return {message: "Success", data:rows};
-    return {message: "Failed", error:"Not found"};
+    try {
+        const [rows] = await GenreModel.getInformation(id);
+        if(rows.length > 0) return {status: "Success", data:rows};
+        return {status: "Failed", message:"Not found"};
+    } catch (error) {
+        throw error;
+    }
 }
 
 GenreService.createOne = async (data) => {
-
-    const [rows] = await GenreModel.createOne(new GenreModel({ genre: data.genre }));
-    if(rows.insertId != 0){
-        const [genre] = await GenreModel.getInformation(rows.insertId);
-        return {message: "Success", data: genre};
+    try {
+        const [rows] = await GenreModel.createOne(new GenreModel({ genre: data.genre }));
+        if(rows.insertId != 0){
+            const [genre] = await GenreModel.getInformation(rows.insertId);
+            return {status: "Success", data: genre};
+        }
+        return {status: "Failed", message: "Can not create"};
+    } catch (error) {
+        throw error;
     }
-    return {message: "Failed", error: "Can not create"};
 }
 
 GenreService.deleteOne = async (id) => {
-    const [anime] = await GenreModel.getAAOG(id);
-    if(anime.length == 0){
-        const [rows] = await GenreModel.deleteOne(id);
-        if(rows.affectedRows != 0){
-            return {message: "Success", result: "Delete success"};
+    try {
+        const [anime] = await GenreModel.getAAOG(id);
+        if(anime.length == 0){
+            const [rows] = await GenreModel.deleteOne(id);
+            if(rows.affectedRows != 0){
+                return {status: "Success"};
+            }
         }
+        return {status: "Failed", message: "Genre is being used"};
+    } catch (error) {
+        throw error;
     }
-    return {message: "Failed", error: "Genre is being used"};
     
 }
 
 GenreService.getAAOG = async (id) => {
-    const [rows] = await GenreModel.getAAOG(id);
-    if(rows.length > 0) return {message: "Success", data:rows};
-    return {message: "Failed", error:"Not found"};
+    try {
+        const [rows] = await GenreModel.getAAOG(id);
+        if(rows.length > 0) return {status: "Success", data:rows};
+        return {status: "Failed", message:"Not found"};
+    } catch (error) {
+        throw error;
+    }
 }
 
 GenreService.updateOne = async (data) => {
-    const [rows] = await GenreModel.updateOne(data);
-    if(rows.affectedRows > 0) return {message: "Success"};
-    return {message: "Failed", error:"Not found"};
+    try {
+        const [rows] = await GenreModel.updateOne(data);
+        if(rows.affectedRows > 0){
+            const [genre] = await GenreModel.getInformation(data.id);
+            return {status: "Success", data: genre};
+        }
+        return {status: "Failed", message:"Not found"};
+    } catch (error) {
+        throw error;
+    }
 }
 
 module.exports = GenreService;
