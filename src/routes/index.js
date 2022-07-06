@@ -8,6 +8,7 @@ const serverRoute = require('./server.route');
 const episodeRoute = require('./episode.route');
 const statusRoute = require('./status.route');
 const yearRoute = require('./year.route');
+const userRoute = require('./user.route');
 const imageRoute = require('./image.route');
 
 router.use('/anime', animeRoute);
@@ -18,6 +19,7 @@ router.use('/server', serverRoute);
 router.use('/episode', episodeRoute);
 router.use('/status', statusRoute);
 router.use('/year', yearRoute);
+router.use('/user', userRoute);
 router.use('/images', imageRoute);
 
 module.exports = router;

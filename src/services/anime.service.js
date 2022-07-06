@@ -185,7 +185,7 @@ AnimeService.deleteGenre = async (data) => {
         }
         return {status: "Failed", message: "Errorrrrrrrrrr"};
     } catch (error) {
-        throw error;
+        console.log(error.message);
     }
 }
 

@@ -19,7 +19,10 @@ SeasonService.addSeason = async (data) => {
         if(isSeason.length == 0) {
             const season = new SeasonModel(data);
             const [rows] = await SeasonModel.addSeason(season);
-            if(rows.insertId != 0) return {status: "Success"};
+            if(rows.insertId != 0){ 
+                const [ss] = await SeasonModel.getAnimeSeason(data.idAnime);
+                return {status: "Success", data: ss};
+            }
         }
         return {status: "Failed", message: "Anime is Season"};
     } catch (error) {

@@ -22,7 +22,10 @@ EpisodeService.getFullUrl = async (data) => {
 EpisodeService.updateOne = async (data) => {
     try {
         const [rows] = await EpisodeModel.updateOne(data);
-        if(rows.affectedRows != 0) return {status: "Success"};
+        if(rows.affectedRows != 0){
+            const [link] = await EpisodeModel.getOneEp(data.idEpisode, true);
+            return {status: "Success", data: link};
+        }
         return {status: "Failed", message: "Can not update"};
     } catch (error) {
         throw error;
@@ -34,7 +37,10 @@ EpisodeService.addEP = async (data) => {
         const [rows] = await EpisodeModel.getOneEp(data, false);
         if(rows.length == 0){
             const [rs] = await EpisodeModel.addEP(data);
-            if(rs.insertId != 0) return {status: "Success"};
+            if(rs.insertId != 0){
+                const [link] = await EpisodeModel.getOneEp(rs.insertId, true);
+                return {status: "Success", data: link};
+            }
         }
         return {status: "Failed", message: "Already exist"};
     } catch (error) {

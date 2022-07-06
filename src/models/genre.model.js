@@ -1,5 +1,4 @@
-const pool = require('./db');
-const promisePool = pool.promise();
+const promisePool = require('./db');
 const slug = require('slug');
 
 function Genre(genre){

@@ -1,5 +1,4 @@
-const pool = require('./db');
-const promisePool = pool.promise();
+const promisePool = require('./db');
 
 function Episode(epsiode){
     this.idAnime = season.idAnime;
@@ -16,6 +15,7 @@ Episode.getEp = async (data) => {
         ON tb_episode.idServer = tb_server.idServer
         WHERE tb_episode.idAnime = ? 
         AND tb_episode.idServer = ?
+        ORDER BY tb_episode.Episode ASC
         `,
         [data.idAnime, data.idServer]
     )

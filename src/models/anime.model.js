@@ -1,6 +1,5 @@
-const pool = require('./db');
+const promisePool = require('./db');
 const slug = require('slug');
-const promisePool = pool.promise();
 
 function Anime(anime) {
     this.name = anime.name;

@@ -3,89 +3,123 @@ const EpisodeService = require('../services/episode.service');
 const EpisodeController = {}
 
 EpisodeController.getEp =  (req, res, next) => {
-    const data = {
-        idAnime: req.params.idAnime,
-        idServer: req.params.idServer
+    const idAnime = req.params.idAnime;
+    const idServer = req.params.idServer;
+    if(idAnime && idServer){
+        const data = {
+            idAnime,
+            idServer
+        }
+        EpisodeService.getEp(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    EpisodeService.getEp(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
 }
 
 EpisodeController.updateOne =  (req, res, next) => {
-    const data = {
-        idEpisode: req.params.id,
-        link: req.body.link
+    const idEpisode = req.params.id;
+    const link = req.body.link;
+    if(idEpisode && link){
+        const data = {
+            idEpisode,
+            link
+        }
+        EpisodeService.updateOne(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    EpisodeService.updateOne(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
 }
 
 EpisodeController.getFullUrl =  (req, res, next) => {
-    const data = {
-        idAnime: req.params.idAnime,
-        episode: req.params.episode
+    const idAnime = req.params.idAnime;
+    const episode = req.params.episode;
+    if(idAnime && episode){
+        const data = {
+            idAnime,
+            episode
+        }
+        EpisodeService.getFullUrl(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    EpisodeService.getFullUrl(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
 }
 
 EpisodeController.addEP =  (req, res, next) => {
-    const data = {
-        anime: req.body.anime,
-        server: req.body.server,
-        episode: req.body.episode,
-        link: req.body.link
+    const anime = req.body.anime;
+    const server = req.body.server;
+    const episode = req.body.episode;
+    const link = req.body.link;
+    if(anime && server && episode && link){
+        const data = {
+            anime,
+            server,
+            episode,
+            link
+        }
+        EpisodeService.addEP(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    EpisodeService.addEP(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
 }
 
 EpisodeController.deleteEp =  (req, res, next) => {
     const id  = req.params.id;
-    EpisodeService.deleteEp(id)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
+    if(id){
+        EpisodeService.deleteEp(id)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
 }
 
 EpisodeController.getLink =  (req, res, next) => {
     const id  = req.params.id;
-    EpisodeService.getLink(id)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    });
+    if(id){
+        EpisodeService.getLink(id)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
 }
 
 module.exports = EpisodeController;

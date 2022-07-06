@@ -14,42 +14,59 @@ YearController.getAll = (req, res , next) => {
 }
 
 YearController.createOne = (req, res , next) => {
-    const data = {year: req.body.year};
-    YearService.createOne(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    const year = req.body.year;
+    if(year){
+        const data = {year};
+        YearService.createOne(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
+    
 }
 
 YearController.updateOne = (req, res , next) => {
-    const data = {
-        id: req.params.id,
-        year: req.body.year
+    const id = req.params.id;
+    const year = req.body.year;
+    if(id && year){
+        const data = {
+            id,
+            year
+        }
+        YearService.updateOne(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    YearService.updateOne(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    
 }
 
 YearController.deleteOne = (req, res , next) => {
     const id = req.params.id
-    YearService.deleteOne(id)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    if(id){
+        YearService.deleteOne(id)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
 }
 
 module.exports = YearController;

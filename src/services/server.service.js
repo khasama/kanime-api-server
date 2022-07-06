@@ -15,7 +15,10 @@ ServerService.createOne = async (data) => {
     try {
         const server = new ServerModel(data);
         const [rows] = await ServerModel.createOne(server);
-        if(rows.insertId > 0) return {status: "Success"};
+        if(rows.insertId > 0){ 
+            const [s] = await ServerModel.getOne(rows.insertId);
+            return {status: "Success", data: s};
+        }
         return {status: "Failed", message: "Can not create"};
     } catch (error) {
         throw error;
@@ -25,7 +28,10 @@ ServerService.createOne = async (data) => {
 ServerService.updateOne = async (data) => {
     try {
         const [rows] = await ServerModel.updateOne(data);
-        if(rows.affectedRows != 0) return {status: "Success"};
+        if(rows.affectedRows != 0){
+            const [server] = await ServerModel.getOne(data.id);
+            return {status: "Success", data: server};
+        }
         return {status: "Failed", message: "Can not update"};
     } catch (error) {
         throw error;

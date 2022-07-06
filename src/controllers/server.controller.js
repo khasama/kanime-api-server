@@ -14,46 +14,65 @@ ServerController.getAll = (req, res , next) => {
 }
 
 ServerController.createOne = (req, res , next) => {
-    const data = {
-        server: req.body.server,
-        description: req.body.description
+    const server = req.body.server;
+    const description = req.body.description;
+    if(server && description){
+        const data = {
+            server,
+            description
+        }
+        ServerService.createOne(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    ServerService.createOne(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    
 }
 
 ServerController.updateOne = (req, res , next) => {
-    const data = {
-        id: req.params.id,
-        server: req.body.server,
-        description: req.body.description
+    const id = req.params.id;
+    const server = req.body.server;
+    const description = req.body.description;
+    if(id && server && description){
+        const data = {
+            id,
+            server,
+            description
+        }
+        ServerService.updateOne(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
     }
-    ServerService.updateOne(data)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    
 }
 
 ServerController.deleteOne = (req, res , next) => {
     const id = req.params.id
-    ServerService.deleteOne(id)
-    .then(rs => {
-        return res.status(200).json(rs);
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({status: "Error", message: "Has a fucking error"});
-    })
+    if(id){
+        ServerService.deleteOne(id)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        })
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
 }
 
 module.exports = ServerController;

@@ -1,5 +1,4 @@
-const pool = require('./db');
-const promisePool = pool.promise();
+const promisePool = require('./db');
 
 function Server(server){
     this.server = server.server;
@@ -8,6 +7,9 @@ function Server(server){
 
 Server.getAll = async () => {
     return await promisePool.execute("SELECT * FROM tb_server ORDER BY idServer ASC");
+}
+Server.getOne = async (id) => {
+    return await promisePool.execute("SELECT * FROM tb_server WHERE idServer = ?", [id]);
 }
 
 Server.createOne = async (server) => {
