@@ -2,6 +2,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
+
 module.exports = {
     verifyToken: (type = 3) => {
         return (req, res, next) => {
@@ -18,7 +19,7 @@ module.exports = {
                         if(role != 1) return next(createError.Forbidden());
                         next();
                         break;
-                        
+
                     case 2:
                         if(role != 1 || role != 2) return next(createError.Forbidden());
                         next();
