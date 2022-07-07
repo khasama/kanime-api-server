@@ -40,7 +40,35 @@ UserService.login = async (data) => {
                 const user = {id: u.idUser, usernane : u.Username, role: u.idRole};
                 const accessToken = await signAccessToken(user);
                 await UserModel.updateLastAccess(u.idUser);
-                return {status: "Success", data: {accessToken}};
+                return {status: "Success", data: {user, accessToken}};
+            }else {
+                return {status: "Failed", message: "Wrong password"};
+            }
+        }else{
+            return {status: "Failed", message: "Not found"};
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+UserService.loginAdminSite = async (data) => {
+    try {
+        const [rows] = await UserModel.checkEU(data.username);
+        if(rows.length != 0){
+            const u = rows[0];
+            const match = await bcrypt.compare(data.password, u.Password);
+            if(match){
+                if(u.idRole == 1 || u.idRole == 2){
+                    const user = {id: u.idUser, usernane : u.Username, avatar: u.Avatar};
+                    const accessToken = await signAccessToken({...user,...{role: u.idRole}});
+                    await UserModel.updateLastAccess(u.idUser);
+                    return [{status: "Success", data: user}, accessToken];
+
+                }else{
+                    return {status: "Failed", message: "You not admin"};
+                }
+                
             }else {
                 return {status: "Failed", message: "Wrong password"};
             }
