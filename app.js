@@ -13,6 +13,7 @@ app.use(cors({
     origin: ["http://192.168.1.7:8080", "http://localhost:8080"],
     credentials: true
 }));
+
 // app.use("/public/anime", express.static("./src/uploads/anime"));
 
 app.use('/api/v1', require('./src/routes'));
