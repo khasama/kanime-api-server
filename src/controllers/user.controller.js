@@ -29,6 +29,10 @@ UserController.loginAdminSite = async (req, res , next) => {
     }
 }
 
+UserController.logout = (req, res , next) => {
+    return res.clearCookie("access_token").status(200).json({status: "Success"});
+}
+
 UserController.login = async (req, res , next) => {
     const username = req.body.username;
     const password = req.body.password;

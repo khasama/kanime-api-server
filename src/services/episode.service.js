@@ -1,5 +1,5 @@
 const EpisodeModel = require('../models/episode.model');
-
+const { getRealLink, convertMulti } = require('../utils');
 const EpisodeService = {}
 
 EpisodeService.getEp = async (data) => {
@@ -36,13 +36,36 @@ EpisodeService.addEP = async (data) => {
     try {
         const [rows] = await EpisodeModel.getOneEp(data, false);
         if(rows.length == 0){
-            const [rs] = await EpisodeModel.addEP(data);
+            const ep = {
+                anime: data.anime,
+                episode: data.episode,
+                server: data.server,
+                link: getRealLink(data.server, data.link)
+            }
+            const [rs] = await EpisodeModel.addEP(ep);
             if(rs.insertId != 0){
                 const [link] = await EpisodeModel.getOneEp(rs.insertId, true);
                 return {status: "Success", data: link};
             }
         }
         return {status: "Failed", message: "Already exist"};
+    } catch (error) {
+        throw error;
+    }
+}
+
+EpisodeService.addMultiEP = async (data) => {
+    try {
+        const multi = data.multi;
+        const server = data.server;
+        const anime = data.anime;
+        const listEp = convertMulti(multi, server);
+        for (const ep of listEp) {
+            const [rows] = await EpisodeModel.addEP({anime, server, episode: ep.episode, link: ep.link});
+        }
+
+        return {status: `Success`};
+        
     } catch (error) {
         throw error;
     }

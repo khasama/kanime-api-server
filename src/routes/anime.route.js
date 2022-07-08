@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const AnimeController = require('../controllers/anime.controller');
-const {verifyAccessToken} = require('../middlewares');
+const {verifyToken} = require('../middlewares');
 
 router.get('/all', AnimeController.getAll);
-router.post('/', AnimeController.createOne);
-router.post('/add-genre', AnimeController.addGenre);
-router.delete('/delete-genre', AnimeController.deleteGenre);
-router.put('/update/:id', AnimeController.updateOne);
-router.put('/activate/:id', AnimeController.activateOne);
-router.delete('/delete/:id', AnimeController.deleteSoft);
+router.post('/', verifyToken(2), AnimeController.createOne);
+router.post('/add-genre', verifyToken(2), AnimeController.addGenre);
+router.delete('/delete-genre', verifyToken(2), AnimeController.deleteGenre);
+router.put('/update/:id', verifyToken(2), AnimeController.updateOne);
+router.put('/activate/:id', verifyToken(2), AnimeController.activateOne);
+router.delete('/delete/:id', verifyToken(2), AnimeController.deleteSoft);
 router.get('/:id', AnimeController.getInformation);
 
 module.exports = router;

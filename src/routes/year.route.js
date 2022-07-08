@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const YearController = require('../controllers/year.controller');
-
-const {adminVerify} = require("../middlewares");
+const {verifyToken} = require('../middlewares');
 
 router.get('/all', YearController.getAll);
-router.post('/', YearController.createOne);
-router.put('/update/:id', YearController.updateOne);
-router.delete('/delete/:id', adminVerify, YearController.deleteOne);
+router.post('/', verifyToken(2), YearController.createOne);
+router.put('/update/:id', verifyToken(2), YearController.updateOne);
+router.delete('/delete/:id', verifyToken(1), YearController.deleteOne);
 
 
 

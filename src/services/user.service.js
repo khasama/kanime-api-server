@@ -80,5 +80,4 @@ UserService.loginAdminSite = async (data) => {
     }
 }
 
-
 module.exports = UserService;

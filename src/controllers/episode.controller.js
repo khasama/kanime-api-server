@@ -90,6 +90,29 @@ EpisodeController.addEP =  (req, res, next) => {
     }
 }
 
+EpisodeController.addMultiEP =  (req, res, next) => {
+    const anime = req.body.anime;
+    const server = req.body.server;
+    const multi = req.body.multi;
+    if(anime && server && multi){
+        const data = {
+            anime,
+            server,
+            multi
+        }
+        EpisodeService.addMultiEP(data)
+        .then(rs => {
+            return res.status(200).json(rs);
+        })
+        .catch(err => {
+            console.log(err);
+            return res.status(500).json({status: "Error", message: "Has a fucking error"});
+        });
+    }else{
+        return res.status(400).json({status: "Failed", message: "Missing params"});
+    }
+}
+
 EpisodeController.deleteEp =  (req, res, next) => {
     const id  = req.params.id;
     if(id){
