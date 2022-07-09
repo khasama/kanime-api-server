@@ -80,4 +80,14 @@ UserService.loginAdminSite = async (data) => {
     }
 }
 
+UserService.getAll = async () => {
+    try {
+        const [rows] = await UserModel.getAll();
+        if(rows.length != 0 ) return {status: "Success", data: rows};
+        return {status: "Failed", message: "Not found"};
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = UserService;

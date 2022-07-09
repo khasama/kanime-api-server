@@ -49,6 +49,13 @@ User.updateLastAccess = async (idUser) => {
     );
 }
 
-
+User.getAll = async () => {
+    return await promisePool.execute(`
+        SELECT * FROM tb_user
+        INNER JOIN tb_role
+        ON tb_user.idRole = tb_role.idRole
+        ORDER BY tb_user.idRole ASC`
+    );
+}
 
 module.exports = User;

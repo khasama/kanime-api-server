@@ -2,7 +2,7 @@ const UserService = require('../services/user.service');
 
 const UserController = {}
 
-UserController.loginAdminSite = async (req, res , next) => {
+UserController.loginAdminSite = (req, res , next) => {
     const username = req.body.username;
     const password = req.body.password;
     if(username && password){
@@ -33,7 +33,7 @@ UserController.logout = (req, res , next) => {
     return res.clearCookie("access_token").status(200).json({status: "Success"});
 }
 
-UserController.login = async (req, res , next) => {
+UserController.login = (req, res , next) => {
     const username = req.body.username;
     const password = req.body.password;
     if(username && password){
@@ -54,7 +54,7 @@ UserController.login = async (req, res , next) => {
     }
 }
 
-UserController.register = async (req, res , next) => {
+UserController.register = (req, res , next) => {
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
@@ -75,6 +75,16 @@ UserController.register = async (req, res , next) => {
     }else{
         return res.status(400).json({status: "Failed", message: "Mising params"});
     }
+}
+
+UserController.getAll = (req, res, next) => {
+    UserService.getAll()
+    .then(rs => {
+        return res.status(200).json(rs);
+    })
+    .catch(err => {
+        return res.status(500).json({status: "Error", message: "Has a fucking error"});
+    })
 }
 
 module.exports = UserController;
