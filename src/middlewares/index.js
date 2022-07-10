@@ -6,7 +6,7 @@ const createError = require('http-errors');
 module.exports = {
     verifyToken: (type = 3) => {
         return (req, res, next) => {
-            const token = req.cookies.access_token;
+            const token = req.headers.authorization.split(' ')[1];
             if(!token){
                 return next(createError.Unauthorized());
             }

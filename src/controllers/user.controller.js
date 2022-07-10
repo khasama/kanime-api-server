@@ -12,15 +12,7 @@ UserController.loginAdminSite = (req, res , next) => {
         }
         UserService.loginAdminSite(data)
         .then(rs => {
-            return res.status(200)
-                    .cookie('access_token', rs[1], {
-                        maxAge: 4 * 60 * 60 * 100,
-                        httpOnly: true,
-                        secure: true,
-                        domain: 'kanime-server.herokuapp.com',
-                        sameSite: "none",
-                    })
-                    .json(rs[0]);
+            return res.status(200).json(rs);
         })
         .catch(err => {
             console.log(err);
@@ -32,7 +24,7 @@ UserController.loginAdminSite = (req, res , next) => {
 }
 
 UserController.logout = (req, res , next) => {
-    return res.clearCookie("access_token").status(200).json({status: "Success"});
+    return res.status(200).json({status: "Success"});
 }
 
 UserController.login = (req, res , next) => {

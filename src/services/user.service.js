@@ -1,6 +1,6 @@
 const UserModel = require('../models/user.model');
 const bcrypt = require('bcrypt');
-const { signAccessToken } = require('../utils')
+const { signAccessToken } = require('../utils');
 
 const UserService = {}
 
@@ -63,7 +63,7 @@ UserService.loginAdminSite = async (data) => {
                     const user = {id: u.idUser, usernane : u.Username, avatar: u.Avatar};
                     const accessToken = await signAccessToken({...user,...{role: u.idRole}});
                     await UserModel.updateLastAccess(u.idUser);
-                    return [{status: "Success", data: user}, accessToken];
+                    return {status: "Success", data: {user, accessToken}};
 
                 }else{
                     return {status: "Failed", message: "You not admin"};
