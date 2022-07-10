@@ -14,10 +14,11 @@ UserController.loginAdminSite = (req, res , next) => {
         .then(rs => {
             return res.status(200)
                     .cookie('access_token', rs[1], {
-                        maxAge: 365 * 24 * 60 * 60 * 100,
+                        maxAge: 4 * 60 * 60 * 100,
                         httpOnly: true,
                         secure: true,
                         domain: 'kanime-server.herokuapp.com',
+                        sameSite: "none",
                     })
                     .json(rs[0]);
         })
