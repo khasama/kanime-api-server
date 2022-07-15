@@ -1,31 +1,19 @@
-const AnimeService = require("../services/anime.service");
+const MangaService = require("../services/manga.service");
 
-const AnimeController = {};
+const MangaController = {};
 
-AnimeController.createOne = (req, res, next) => {
+MangaController.createOne = (req, res, next) => {
     const image = req.body.image;
-    const imagebg = req.body.imagebg;
     const name = req.body.name;
-    const othername = req.body.othername;
     const content = req.body.content;
-    const year = req.body.year;
 
-    if (image == undefined || imagebg == undefined) {
-        return res
-            .status(400)
-            .json({ status: "failed", message: "Missing image" });
-    }
-
-    if (image && imagebg && name && othername && content && year) {
+    if (image && name && content) {
         const data = {
             name,
-            othername,
             content,
-            year,
             image,
-            imagebg,
         };
-        AnimeService.createOne(data)
+        MangaService.createOne(data)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -42,21 +30,19 @@ AnimeController.createOne = (req, res, next) => {
     }
 };
 
-AnimeController.updateOne = (req, res, next) => {
+MangaController.updateOne = (req, res, next) => {
     const data = req.body.data;
     const id = req.params.id;
     if (
         id &&
         data.name &&
-        data.othername &&
         data.content &&
         data.view &&
-        data.liked &&
-        data.year &&
-        data.mainserver &&
+        data.mainsource &&
+        data.image &&
         data.status
     ) {
-        AnimeService.updateOne(data, id)
+        MangaService.updateOne({ ...data, ...id })
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -73,8 +59,8 @@ AnimeController.updateOne = (req, res, next) => {
     }
 };
 
-AnimeController.getAll = (req, res, next) => {
-    AnimeService.getAll()
+MangaController.getAll = (req, res, next) => {
+    MangaService.getAll()
         .then((rs) => {
             return res.status(200).json(rs);
         })
@@ -86,10 +72,10 @@ AnimeController.getAll = (req, res, next) => {
         });
 };
 
-AnimeController.getInformation = (req, res, next) => {
+MangaController.getInformation = (req, res, next) => {
     const id = req.params.id;
     if (id) {
-        AnimeService.getInformation(id)
+        MangaService.getInformation(id)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -106,10 +92,10 @@ AnimeController.getInformation = (req, res, next) => {
     }
 };
 
-AnimeController.deleteSoft = (req, res, next) => {
+MangaController.deleteSoft = (req, res, next) => {
     const id = req.params.id;
     if (id) {
-        AnimeService.deleteSoft(id)
+        MangaService.deleteSoft(id)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -126,10 +112,10 @@ AnimeController.deleteSoft = (req, res, next) => {
     }
 };
 
-AnimeController.activateOne = (req, res, next) => {
+MangaController.activateOne = (req, res, next) => {
     const id = req.params.id;
     if (id) {
-        AnimeService.activateOne(id)
+        MangaService.activateOne(id)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -146,15 +132,15 @@ AnimeController.activateOne = (req, res, next) => {
     }
 };
 
-AnimeController.addGenre = (req, res, next) => {
-    const idAnime = req.body.anime;
-    const idGenre = req.body.genre;
-    if (idAnime && idGenre) {
+MangaController.addGenre = (req, res, next) => {
+    const idManga = req.body.idManga;
+    const idGenre = req.body.idGenre;
+    if (idManga && idGenre) {
         const data = {
-            idAnime,
+            idManga,
             idGenre,
         };
-        AnimeService.addGenre(data)
+        MangaService.addGenre(data)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -171,15 +157,15 @@ AnimeController.addGenre = (req, res, next) => {
     }
 };
 
-AnimeController.deleteGenre = (req, res, next) => {
-    const idGA = req.body.idGA;
-    const idAnime = req.body.idAnime;
-    if (idGA && idAnime) {
+MangaController.deleteGenre = (req, res, next) => {
+    const idGA = req.body.idGM;
+    const idManga = req.body.idManga;
+    if (idGA && idManga) {
         const data = {
-            idGA,
-            idAnime,
+            idGM,
+            idManga,
         };
-        AnimeService.deleteGenre(data)
+        MangaService.deleteGenre(data)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -196,4 +182,4 @@ AnimeController.deleteGenre = (req, res, next) => {
     }
 };
 
-module.exports = AnimeController;
+module.exports = MangaController;

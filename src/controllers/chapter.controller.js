@@ -1,16 +1,95 @@
-const EpisodeService = require("../services/episode.service");
+const ChapterService = require("../services/chapter.service");
 
-const EpisodeController = {};
+const ChapterController = {};
 
-EpisodeController.getEp = (req, res, next) => {
-    const idAnime = req.params.idAnime;
-    const idServer = req.params.idServer;
-    if (idAnime && idServer) {
+ChapterController.getAllChap = (req, res, next) => {
+    const idManga = req.params.idManga;
+    const idSource = req.params.idSource;
+    if (idManga && idSource) {
+        const data = {
+            idManga,
+            idSource,
+        };
+        ChapterService.getAllChap(data)
+            .then((rs) => {
+                return res.status(200).json(rs);
+            })
+            .catch((err) => {
+                console.log(err);
+                return res
+                    .status(500)
+                    .json({ status: "error", message: "Has a fucking error" });
+            });
+    } else {
+        return res
+            .status(400)
+            .json({ status: "failed", message: "Missing params" });
+    }
+};
+
+ChapterController.updateOne = (req, res, next) => {
+    const idChapter = req.params.id;
+    const list = req.body.list;
+    if (idChapter && list) {
+        const data = {
+            idChapter,
+            list,
+        };
+        ChapterService.updateOne(data)
+            .then((rs) => {
+                return res.status(200).json(rs);
+            })
+            .catch((err) => {
+                console.log(err);
+                return res
+                    .status(500)
+                    .json({ status: "error", message: "Has a fucking error" });
+            });
+    } else {
+        return res
+            .status(400)
+            .json({ status: "failed", message: "Missing params" });
+    }
+};
+
+ChapterController.getAllList = (req, res, next) => {
+    const idManga = req.params.idManga;
+    const chapter = req.params.chapter;
+    if (idManga && chapter) {
+        const data = {
+            idManga,
+            chapter,
+        };
+        ChapterService.getAllList(data)
+            .then((rs) => {
+                return res.status(200).json(rs);
+            })
+            .catch((err) => {
+                console.log(err);
+                return res
+                    .status(500)
+                    .json({ status: "error", message: "Has a fucking error" });
+            });
+    } else {
+        return res
+            .status(400)
+            .json({ status: "failed", message: "Missing params" });
+    }
+};
+
+ChapterController.addChap = (req, res, next) => {
+    const idAnime = req.body.idAnime;
+    const idSource = req.body.idSource;
+    const chapter = req.body.chapter;
+    const list = req.body.list;
+    if (idAnime && idSource && chapter && list) {
         const data = {
             idAnime,
-            idServer,
+            idSource,
+            chapter,
+            list,
         };
-        EpisodeService.getEp(data)
+        ChapterService.addChap(data)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -27,116 +106,33 @@ EpisodeController.getEp = (req, res, next) => {
     }
 };
 
-EpisodeController.updateOne = (req, res, next) => {
-    const idEpisode = req.params.id;
-    const link = req.body.link;
-    if (idEpisode && link) {
-        const data = {
-            idEpisode,
-            link,
-        };
-        EpisodeService.updateOne(data)
-            .then((rs) => {
-                return res.status(200).json(rs);
-            })
-            .catch((err) => {
-                console.log(err);
-                return res
-                    .status(500)
-                    .json({ status: "error", message: "Has a fucking error" });
-            });
-    } else {
-        return res
-            .status(400)
-            .json({ status: "failed", message: "Missing params" });
-    }
-};
+// ChapterController.addMultiEP =  (req, res, next) => {
+//     const anime = req.body.anime;
+//     const server = req.body.server;
+//     const multi = req.body.multi;
+//     if(anime && server && multi){
+//         const data = {
+//             anime,
+//             server,
+//             multi
+//         }
+//         ChapterService.addMultiEP(data)
+//         .then(rs => {
+//             return res.status(200).json(rs);
+//         })
+//         .catch(err => {
+//             console.log(err);
+//             return res.status(500).json({status: "error", message: "Has a fucking error"});
+//         });
+//     }else{
+//         return res.status(400).json({status: "failed", message: "Missing params"});
+//     }
+// }
 
-EpisodeController.getFullUrl = (req, res, next) => {
-    const idAnime = req.params.idAnime;
-    const episode = req.params.episode;
-    if (idAnime && episode) {
-        const data = {
-            idAnime,
-            episode,
-        };
-        EpisodeService.getFullUrl(data)
-            .then((rs) => {
-                return res.status(200).json(rs);
-            })
-            .catch((err) => {
-                console.log(err);
-                return res
-                    .status(500)
-                    .json({ status: "error", message: "Has a fucking error" });
-            });
-    } else {
-        return res
-            .status(400)
-            .json({ status: "failed", message: "Missing params" });
-    }
-};
-
-EpisodeController.addEP = (req, res, next) => {
-    const anime = req.body.anime;
-    const server = req.body.server;
-    const episode = req.body.episode;
-    const link = req.body.link;
-    if (anime && server && episode && link) {
-        const data = {
-            anime,
-            server,
-            episode,
-            link,
-        };
-        EpisodeService.addEP(data)
-            .then((rs) => {
-                return res.status(200).json(rs);
-            })
-            .catch((err) => {
-                console.log(err);
-                return res
-                    .status(500)
-                    .json({ status: "error", message: "Has a fucking error" });
-            });
-    } else {
-        return res
-            .status(400)
-            .json({ status: "failed", message: "Missing params" });
-    }
-};
-
-EpisodeController.addMultiEP = (req, res, next) => {
-    const anime = req.body.anime;
-    const server = req.body.server;
-    const multi = req.body.multi;
-    if (anime && server && multi) {
-        const data = {
-            anime,
-            server,
-            multi,
-        };
-        EpisodeService.addMultiEP(data)
-            .then((rs) => {
-                return res.status(200).json(rs);
-            })
-            .catch((err) => {
-                console.log(err);
-                return res
-                    .status(500)
-                    .json({ status: "error", message: "Has a fucking error" });
-            });
-    } else {
-        return res
-            .status(400)
-            .json({ status: "failed", message: "Missing params" });
-    }
-};
-
-EpisodeController.deleteEp = (req, res, next) => {
+ChapterController.deleteChap = (req, res, next) => {
     const id = req.params.id;
     if (id) {
-        EpisodeService.deleteEp(id)
+        ChapterService.deleteChap(id)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -153,10 +149,10 @@ EpisodeController.deleteEp = (req, res, next) => {
     }
 };
 
-EpisodeController.getLink = (req, res, next) => {
+ChapterController.getOneChap = (req, res, next) => {
     const id = req.params.id;
     if (id) {
-        EpisodeService.getLink(id)
+        ChapterService.getOneChap(id)
             .then((rs) => {
                 return res.status(200).json(rs);
             })
@@ -173,4 +169,4 @@ EpisodeController.getLink = (req, res, next) => {
     }
 };
 
-module.exports = EpisodeController;
+module.exports = ChapterController;

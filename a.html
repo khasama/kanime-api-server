@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        a {
+            background-color: blueviolet;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px;
+            margin: 3px 5px;
+        }
+
+        .wrapper {
+            width: 1280px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="server">
+
+        </div>
+
+        <div id="img-wrap">
+
+        </div>
+    </div>
+
+    <script>
+        fetch('http://localhost:3456/api/v1/chapter/get-flist/1-1')
+            .then(response => response.json())
+            .then(data => {
+                const server = data.data;
+                server.forEach(ele => {
+                    document.getElementById("server").insertAdjacentHTML('beforeend',
+                        `<a href="javascript:void(0)" onclick="getChap(${ele.idChapter}, ${ele.idSource})" >${ele.Source}</a>`);
+                });
+            });
+
+        function getChap(idChapter, idSource) {
+            // fetch(`http://localhost:3456/api/v1/chapter/get-chap/${idChapter}`)
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         const listImg = JSON.parse(data.data[0].List);
+            //         listImg.forEach((ele) => {
+            //             document.getElementById("img-wrap").insertAdjacentHTML('beforeend',
+            //                 `<img src="http://localhost:3456/api/v1/images/manga/${idSource}/${ele.key}" width="60%" />`);
+            //         });
+            //     });
+        }
+    </script>
+</body>
+
+</html>
